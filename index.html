@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>웹 폼 & Apps Script 통합 생성기 (설명서 포함 최종본)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }
+        .container { max-width: 950px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        h2, h3 { color: #1a73e8; border-bottom: 2px solid #e8f0fe; padding-bottom: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 14px; }
+        input[type="text"], select { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 4px; border: 1px solid #ccc; border-radius: 5px; }
+        .help-text { font-size: 12px; color: #666; margin-bottom: 10px; line-height: 1.4; }
+        .question-item { border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fafafa; position: relative; }
+        .question-item.section-type { background: #e8f0fe; border-color: #1a73e8; }
+        .options-box, .cycle-box { margin-top: 10px; padding: 10px; background: #eef2f5; border-radius: 5px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button { background-color: #1a73e8; color: white; border: none; padding: 10px 18px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 14px; }
+        button:hover { background-color: #1557b0; }
+        .btn-add { background-color: #34a853; margin-bottom: 15px; }
+        .btn-copy { background-color: #ff9800; margin-bottom: 10px; }
+        .btn-delete { background-color: #d93025; padding: 5px 10px; font-size: 12px; position: absolute; top: 10px; right: 10px; }
+        
+        .tab-menu { display: flex; gap: 5px; margin-top: 20px; border-bottom: 2px solid #1a73e8; }
+        .tab-btn { background: #e8f0fe; color: #1a73e8; border: none; padding: 10px 20px; border-radius: 6px 6px 0 0; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: #1a73e8; color: white; }
+        .tab-content { display: none; margin-top: 15px; }
+        .tab-content.active { display: block; }
+        
+        pre { background: #282c34; color: #abb2bf; padding: 15px; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; font-family: 'Consolas', monospace; font-size: 13px; }
+        
+        .guide-box { background: #f8f9fa; border: 1px solid #dadce0; border-radius: 8px; padding: 20px; line-height: 1.6; }
+        .guide-step { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #ccc; }
+        .guide-step:last-child { border-bottom: none; }
+        .guide-step h4 { margin: 0 0 10px 0; color: #1a73e8; font-size: 16px; }
+        .guide-step ol, .guide-step ul { margin: 5px 0; padding-left: 20px; }
+        .highlight { background: #e8f0fe; color: #1557b0; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .code-inline { background: #e9ecef; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🛠️ Web Form & Apps Script 통합 생성기 (최종 완성본)</h2>
+    
+    <div class="grid-2">
+        <div class="form-group">
+            <label>시트 제목</label>
+            <input type="text" id="sheetTitle" value="일일점검표(입고장)">
+        </div>
+        <div class="form-group">
+            <label>점검장소</label>
+            <input type="text" id="locationName" value="입고장">
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="form-group">
+            <label>비밀번호</label>
+            <input type="text" id="appPassword" value="261001">
+        </div>
+        <div class="form-group">
+            <label>Google Drive Folder ID (첨부파일 저장용)</label>
+            <input type="text" id="driveFolderId" placeholder="예: 1A2b3C4d5E6f7G8h9I0jKLMnOP">
+            <div class="help-text">
+                💡 <strong>Folder ID란?</strong> 첨부파일이 저장될 구글 드라이브 폴더의 고유 식별자입니다.<br>
+                📌 <strong>확인 방법:</strong> 구글 드라이브에서 해당 폴더에 들어간 뒤, 웹 브라우저 주소창 URL의 맨 뒤 값(<code>drive.google.com/drive/folders/<strong>이부분</strong></code>)을 복사해 붙여넣으세요.
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Apps Script Web App URL (배포 후 입력)</label>
+        <input type="text" id="webAppUrl" placeholder="https://script.google.com/macros/s/.../exec">
+        <div class="help-text">
+            💡 <strong>Web App URL이란?</strong> 웹 폼 제출 데이터를 스프레드시트로 전송해 주는 서버 주소입니다.<br>
+            📌 <strong>확인 방법:</strong> 구글 시트 상단 메뉴 [확장 프로그램] > [Apps Script]에서 코드를 넣은 후, 오른쪽 상단 [배포] > [새 배포]를 완료하면 발급되는 URL입니다.
+        </div>
+    </div>
+
+    <h3>질문 항목 설정</h3>
+    <div id="questionsContainer"></div>
+
+    <button type="button" class="btn-add" onclick="addQuestion()">+ 질문 추가</button>
+    <br><br>
+    <button type="button" onclick="generateAll()">전체 코드 및 설명서 생성하기</button>
+
+    <hr style="margin: 30px 0;">
+
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="openTab(event, 'guideTab')">📖 사용 설명서</button>
+        <button class="tab-btn" onclick="openTab(event, 'htmlTab')">1. 웹 HTML 코드</button>
+        <button class="tab-btn" onclick="openTab(event, 'gasTab')">2. Apps Script 코드</button>
+    </div>
+
+    <div id="guideTab" class="tab-content active">
+        <div class="guide-box" id="guideContent">
+            <p><strong>[전체 코드 및 설명서 생성하기]</strong> 버튼을 누르면 설정된 질문 개수에 맞춘 동적 열 가이드가 여기에 출력됩니다.</p>
+        </div>
+    </div>
+
+    <div id="htmlTab" class="tab-content">
+        <button type="button" class="btn-copy" onclick="copyCode('generatedHTML')">HTML 코드 복사하기</button>
+        <pre><code id="generatedHTML"></code></pre>
+    </div>
+
+    <div id="gasTab" class="tab-content">
+        <button type="button" class="btn-copy" onclick="copyCode('generatedGAS')">Apps Script 코드 복사하기</button>
+        <pre><code id="generatedGAS"></code></pre>
+    </div>
+</div>
+
+<script>
+function addQuestion(title = '', type = 'RADIO', cycle = 'DAILY', options = '양호, 불량', unit = '') {
+    const container = document.getElementById('questionsContainer');
+    const div = document.createElement('div');
+    div.className = 'question-item' + (type === 'SECTION' ? ' section-type' : '');
+    
+    div.innerHTML = `
+        <button type="button" class="btn-delete" onclick="this.parentElement.remove()">삭제</button>
+        <div class="grid-2">
+            <div>
+                <label>질문 제목</label>
+                <input type="text" class="q-title" value="${title}">
+            </div>
+            <div>
+                <label>질문 유형</label>
+                <select class="q-type" onchange="toggleOptions(this)">
+                    <option value="SECTION" ${type==='SECTION'?'selected':''}>📌 소제목 (구분선)</option>
+                    <option value="RADIO" ${type==='RADIO'?'selected':''}>객관식 (단일 선택)</option>
+                    <option value="CHECKBOX" ${type==='CHECKBOX'?'selected':''}>체크박스 (다중 선택)</option>
+                    <option value="TEXT" ${type==='TEXT'?'selected':''}>단답형 (텍스트)</option>
+                    <option value="NUMBER" ${type==='NUMBER'?'selected':''}>숫자 입력</option>
+                    <option value="TEXTAREA" ${type==='TEXTAREA'?'selected':''}>장문형</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="cycle-box">
+            <label>📅 작성 주기 설정</label>
+            <select class="q-cycle">
+                <option value="DAILY" ${cycle==='DAILY'?'selected':''}>매일 작성</option>
+                <option value="MON" ${cycle==='MON'?'selected':''}>월요일 전용 (주간)</option>
+                <option value="FRI" ${cycle==='FRI'?'selected':''}>금요일 전용 (주간)</option>
+                <option value="MONTH_1" ${cycle==='MONTH_1'?'selected':''}>매월 1일 전용 (월간)</option>
+            </select>
+        </div>
+
+        <div class="options-box">
+            <label>선택 옵션 (쉼표 구분)</label>
+            <input type="text" class="q-options" value="${options}">
+        </div>
+        <div class="unit-box" style="display:none; margin-top:5px;">
+            <label>단위 (예: ℃, %)</label>
+            <input type="text" class="q-unit" value="${unit}">
+        </div>
+    `;
+    container.appendChild(div);
+    toggleOptions(div.querySelector('.q-type'));
+}
+
+function toggleOptions(selectElem) {
+    const parent = selectElem.parentElement.parentElement.parentElement;
+    parent.querySelector('.options-box').style.display = (selectElem.value === 'RADIO' || selectElem.value === 'CHECKBOX') ? 'block' : 'none';
+    parent.querySelector('.unit-box').style.display = (selectElem.value === 'NUMBER') ? 'block' : 'none';
+    parent.querySelector('.cycle-box').style.display = (selectElem.value === 'SECTION') ? 'none' : 'block';
+    if (selectElem.value === 'SECTION') parent.classList.add('section-type');
+    else parent.classList.remove('section-type');
+}
+
+function openTab(evt, tabName) {
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    evt.currentTarget.classList.add('active');
+}
+
+function copyCode(elementId) {
+    const code = document.getElementById(elementId).textContent;
+    if(!code || code.trim() === "") {
+        alert("먼저 코드를 생성해주세요!");
+        return;
+    }
+    navigator.clipboard.writeText(code).then(() => alert("코드가 클립보드에 복사되었습니다!"));
+}
+
+function colLetter(colNum) {
+    let letter = '';
+    while (colNum > 0) {
+        let remainder = (colNum - 1) % 26;
+        letter = String.fromCharCode(65 + remainder) + letter;
+        colNum = Math.floor((colNum - 1) / 26);
+    }
+    return letter;
+}
+
+function generateAll() {
+    const sheetTitle = document.getElementById('sheetTitle').value || '일일점검표(입고장)';
+    const location = document.getElementById('locationName').value || '입고장';
+    const appPassword = document.getElementById('appPassword').value || '261001';
+    const driveFolderId = document.getElementById('driveFolderId').value || 'YOUR_DRIVE_FOLDER_ID';
+    const url = document.getElementById('webAppUrl').value || 'YOUR_APPS_SCRIPT_URL';
+    const items = document.querySelectorAll('.question-item');
+
+    let itemsJS = '';
+    let itemsHTML = '';
+    let gasRowData = '';
+    let headerList = [];
+    let fieldCount = 0;
+
+    items.forEach((item) => {
+        const qTitle = item.querySelector('.q-title').value || '항목';
+        const qType = item.querySelector('.q-type').value;
+        const qCycle = item.querySelector('.q-cycle').value;
+        const qOptions = item.querySelector('.q-options').value;
+        const qUnit = item.querySelector('.q-unit').value;
+
+        if (qType === 'SECTION') {
+            itemsHTML += `    <div class="section-title">${qTitle}</div>\n`;
+            return;
+        }
+
+        fieldCount++;
+        const fieldId = `item${fieldCount}`;
+        headerList.push(qTitle);
+
+        let cycleNotice = '';
+        if (qCycle === 'MON') cycleNotice = '<span class="cycle-tag">[월요일 전용]</span>';
+        else if (qCycle === 'FRI') cycleNotice = '<span class="cycle-tag">[금요일 전용]</span>';
+        else if (qCycle === 'MONTH_1') cycleNotice = '<span class="cycle-tag">[매월 1일 전용]</span>';
+
+        if (qType === 'RADIO') {
+            const opts = qOptions.split(',').map(s => s.trim());
+            let radioBtns = opts.map(opt => `<label><input type="radio" name="${fieldId}" value="${opt}"> ${opt}</label>`).join(' ');
+            itemsHTML += `    <div class="check-item" data-cycle="${qCycle}">\n      <div><span>${qTitle}</span> ${cycleNotice}<div class="off-msg"></div></div>\n      <div class="radio-group">${radioBtns}</div>\n    </div>\n`;
+            itemsJS += `        "${qTitle}": getRadioValue("${fieldId}"),\n`;
+        } else if (qType === 'NUMBER') {
+            itemsHTML += `    <div class="check-item" data-cycle="${qCycle}">\n      <div><span>${qTitle}</span> ${cycleNotice}<div class="off-msg"></div></div>\n      <div class="input-wrap"><input type="number" id="${fieldId}" class="input-inline" placeholder="숫자 입력"> <span class="unit-text">${qUnit}</span></div>\n    </div>\n`;
+            itemsJS += `        "${qTitle}": document.getElementById("${fieldId}").disabled ? "-" : (document.getElementById("${fieldId}").value ? document.getElementById("${fieldId}").value + "${qUnit}" : "-"),\n`;
+        } else if (qType === 'TEXT') {
+            itemsHTML += `    <div class="form-group check-item-wrap" data-cycle="${qCycle}">\n      <label>${qTitle} ${cycleNotice} <span class="off-msg"></span></label>\n      <input type="text" id="${fieldId}">\n    </div>\n`;
+            itemsJS += `        "${qTitle}": document.getElementById("${fieldId}").disabled ? "-" : (document.getElementById("${fieldId}").value || "-"),\n`;
+        } else if (qType === 'TEXTAREA') {
+            itemsHTML += `    <div class="form-group check-item-wrap" data-cycle="${qCycle}">\n      <label>${qTitle} ${cycleNotice} <span class="off-msg"></span></label>\n      <textarea id="${fieldId}"></textarea>\n    </div>\n`;
+            itemsJS += `        "${qTitle}": document.getElementById("${fieldId}").disabled ? "-" : (document.getElementById("${fieldId}").value || "-"),\n`;
+        }
+
+        gasRowData += `      items["${qTitle}"] || "-",\n`;
+    });
+
+    const totalQuestions = headerList.length;
+    const noteColIdx = 3 + totalQuestions + 1;
+    const fileColIdx = noteColIdx + 1;
+    const approvalStartCol = fileColIdx + 1;
+    const approvalEndCol = approvalStartCol + 2;
+    const emailColIdx = approvalEndCol + 1;
+
+    const apprStartLetter = colLetter(approvalStartCol);
+    const apprEndLetter = colLetter(approvalEndCol);
+    const emailColLetter = colLetter(emailColIdx);
+    const noteColLetter = colLetter(noteColIdx);
+    const fileColLetter = colLetter(fileColIdx);
+
+    let headerGuideText = headerList.map((h, i) => `<span class="code-inline">${colLetter(4+i)}열: ${h}</span>`).join(', ');
+
+    const guideHTML = `
+        <div class="guide-step">
+            <h4>📌 1단계: 구글 스프레드시트 구조 (동적 반영됨)</h4>
+            <ul>
+                <li>시트 이름: <span class="highlight">${sheetTitle}</span></li>
+                <li><strong>결재란 영역:</strong> <span class="code-inline">${apprStartLetter}2:${apprEndLetter}3</span> (2행 이름, 3행 시간 자동기록)</li>
+                <li><strong>4행 헤더 배치:</strong>
+                    <ul>
+                        <li><span class="code-inline">A4: 제출일시</span>, <span class="code-inline">B4: 구분</span>, <span class="code-inline">C4: 작성자</span></li>
+                        <li><strong>질문 열:</strong> ${headerGuideText}</li>
+                        <li><span class="code-inline">${noteColLetter}4: 특이사항</span></li>
+                        <li><span class="code-inline">${fileColLetter}4: 첨부파일</span></li>
+                    </ul>
+                </li>
+                <li><strong>월말 결재요청 이메일 주소 입력셀:</strong> <span class="code-inline">${emailColLetter}1, ${emailColLetter}2, ${emailColLetter}3</span> 셀에 수신자 이메일을 입력하세요.</li>
+            </ul>
+        </div>
+        <div class="guide-step">
+            <h4>📌 2단계: Apps Script 코드 적용 및 배포</h4>
+            <ol>
+                <li>[Apps Script 코드] 탭의 전체 코드를 복사해 시트의 <span class="highlight">확장 프로그램 > Apps Script</span>(<span class="code-inline">Code.gs</span>)에 붙여넣고 저장하세요.</li>
+                <li>오른쪽 상단 <span class="highlight">배포 > 새 배포</span> 클릭 (웹 앱, 나, 모든 사용자 권한 설정) 후 발급된 URL을 복사하여 상단 칸에 입력하세요.</li>
+            </ol>
+        </div>
+    `;
+
+    const resultHTML = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📋 ${sheetTitle}</title>
+  <style>
+    body { font-family: 'Noto Sans KR', sans-serif; background: #f8f9fa; margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; }
+    h2 { text-align: center; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; color: #202124; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 14px; }
+    input[type="text"], input[type="number"], input[type="file"], textarea { width: 100%; padding: 10px; border: 1px solid #dadce0; border-radius: 6px; box-sizing: border-box; }
+    input[readonly] { background-color: #e9ecef; color: #495057; cursor: not-allowed; }
+    textarea { resize: vertical; height: 80px; }
+    .section-title { font-weight: bold; background: #e8f0fe; padding: 8px 12px; border-radius: 4px; margin-top: 20px; color: #1967d2; }
+    .check-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f3f4; }
+    .radio-group label { font-weight: normal; margin-left: 10px; cursor: pointer; }
+    .input-wrap { display: flex; align-items: center; gap: 6px; }
+    .input-inline { width: 100px !important; text-align: right; padding: 8px 10px !important; margin: 0 !important; }
+    .unit-text { font-size: 14px; font-weight: bold; color: #555; white-space: nowrap; }
+    .disabled-item { background-color: #f1f3f4; opacity: 0.6; padding: 10px; border-radius: 6px; pointer-events: none; }
+    .cycle-tag { font-size: 11px; color: #e65100; font-weight: bold; margin-left: 5px; }
+    .off-msg { font-size: 11px; color: #757575; margin-top: 2px; }
+    .btn-submit { width: 100%; background: #1a73e8; color: #fff; padding: 14px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 24px; }
+  </style>
+</head>
+<body>
+
+<div class="container" id="mainContainer">
+  <h2>📋 ${sheetTitle}</h2>
+  <form id="checkForm">
+    <div class="form-group"><label>점검장소</label><input type="text" id="location" value="${location}" readonly></div>
+    <div class="form-group"><label>작성자</label><input type="text" id="worker" required placeholder="성함 입력"></div>
+${itemsHTML}
+    <div class="form-group" style="margin-top: 20px;"><label>특이사항</label><textarea id="note" placeholder="특이사항이 있을 경우 작성해주세요."></textarea></div>
+    <div class="form-group"><label>사진 첨부 (최대 10개)</label><input type="file" id="photo" accept="image/*" multiple></div>
+    <button type="submit" id="submitBtn" class="btn-submit">제출하기</button>
+  </form>
+</div>
+
+<script>
+  const APP_PASSWORD = "${appPassword}";
+  const GAS_WEB_APP_URL = "${url}";
+
+  (function initPage() {
+    const pwd = prompt("점검표를 작성하려면 비밀번호를 입력하세요:");
+    if (pwd !== APP_PASSWORD) {
+      alert("비밀번호가 올바르지 않습니다. 접근이 제한됩니다.");
+      document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#d93025;'>접근 권한이 없습니다.<br>페이지를 새로고침하여 비밀번호를 다시 입력하세요.</h2>";
+      return;
+    }
+    document.getElementById("mainContainer").style.display = "block";
+    applyCycleControls();
+  })();
+
+  function applyCycleControls() {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const dateNum = today.getDate();
+
+    document.querySelectorAll('[data-cycle]').forEach(item => {
+      const cycle = item.getAttribute('data-cycle');
+      let isOff = false;
+      let msg = "";
+
+      if (cycle === 'MON' && dayOfWeek !== 1) { isOff = true; msg = "오늘 작성일이 아닙니다 (매주 월요일 작성)"; }
+      else if (cycle === 'FRI' && dayOfWeek !== 5) { isOff = true; msg = "오늘 작성일이 아닙니다 (매주 금요일 작성)"; }
+      else if (cycle === 'MONTH_1' && dateNum !== 1) { isOff = true; msg = "오늘 작성일이 아닙니다 (매월 1일 작성)"; }
+
+      if (isOff) {
+        item.classList.add('disabled-item');
+        item.querySelectorAll('input, select, textarea').forEach(input => input.disabled = true);
+        const msgBox = item.querySelector('.off-msg');
+        if (msgBox) msgBox.innerText = "🔒 " + msg + " -> [해당없음(-)]으로 자동 제출됩니다.";
+      }
+    });
+  }
+
+  function getRadioValue(name) {
+    const anyEl = document.querySelector(\`input[name="\${name}"]\`);
+    if (anyEl && anyEl.disabled) return "-";
+    const el = document.querySelector(\`input[name="\${name}"]:checked\`);
+    return el ? el.value : "";
+  }
+
+  function getFormattedTimestamp() {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    return \`\${now.getFullYear()}\${pad(now.getMonth() + 1)}\${pad(now.getDate())}_\${pad(now.getHours())}\${pad(now.getMinutes())}\${pad(now.getSeconds())}\`;
+  }
+
+  function fileToBase64(file, newFileName) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({ base64: reader.result.split(',')[1], mimeType: file.type, name: newFileName });
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById("checkForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const activeRadios = Array.from(document.querySelectorAll('.check-item:not(.disabled-item) input[type="radio"]'));
+    const radioNames = [...new Set(activeRadios.map(r => r.name))];
+    for (let name of radioNames) {
+      if (!document.querySelector(\`input[name="\${name}"]:checked\`)) {
+        alert("모든 활성화된 점검 항목을 체크해 주세요.");
+        const target = document.querySelector(\`input[name="\${name}"]\`);
+        if (target) target.focus();
+        return;
+      }
+    }
+
+    const files = Array.from(document.getElementById("photo").files);
+    if (files.length > 10) { alert("사진은 최대 10개까지만 첨부할 수 있습니다."); return; }
+
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true; submitBtn.innerText = "제출 중...";
+
+    const locationVal = document.getElementById("location").value.trim();
+    const workerVal = document.getElementById("worker").value.trim();
+    const timestamp = getFormattedTimestamp();
+
+    try {
+      const filePromises = files.map((file, index) => {
+        const extMatch = file.name.match(/\\.[^/.]+$/);
+        const ext = extMatch ? extMatch[0] : "";
+        const seq = files.length > 1 ? \`_\${index + 1}\` : "";
+        return fileToBase64(file, \`\${locationVal}_\${timestamp}_\${workerVal}\${seq}\${ext}\`);
+      });
+
+      const processedFiles = await Promise.all(filePromises);
+
+      const payload = {
+        location: locationVal,
+        worker: workerVal,
+        note: document.getElementById("note").value,
+        files: processedFiles,
+        items: { ${itemsJS.replace(/\n\s+/g, ' ')} }
+      };
+
+      const response = await fetch(GAS_WEB_APP_URL, {
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (data.result === "success") {
+        alert("점검표 제출이 성공적으로 완료되었습니다!");
+        document.getElementById("checkForm").reset();
+        document.getElementById("location").value = "${location}";
+      } else { alert("오류: " + data.error); }
+    } catch (error) {
+      alert("네트워크 오류가 발생했습니다."); console.error(error);
+    } finally {
+      submitBtn.disabled = false; submitBtn.innerText = "제출하기";
+    }
+  });
+<\/script>
+</body>
+</html>`;
+
+    const resultGAS = `// ==========================================
+// 동적 열 설정 상수 (${totalQuestions}개 질문 기준)
+// ==========================================
+const APPROVAL_START_COL = ${approvalStartCol}; // 결재란 시작 열 (${apprStartLetter}열)
+const APPROVAL_END_COL = ${approvalEndCol};     // 결재란 끝 열 (${apprEndLetter}열)
+const EMAIL_COL = ${emailColIdx};               // 이메일 주소 시작 열 (${emailColLetter}열)
+
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('📋 점검표 관리')
+    .addItem('🚀 점검표 제출 (마감)', 'submitInspection')
+    .addSeparator()
+    .addItem('📩 메일 수동발송', 'sendMonthlyReviewEmail')
+    .addToUi();
+}
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("${sheetTitle}");
+    
+    if (!sheet) {
+      return ContentService.createTextOutput(JSON.stringify({ result: "error", error: "시트를 찾을 수 없습니다." })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var timestamp = new Date();
+    var items = data.items || {};
+    var fileUrls = [];
+
+    if (data.files && data.files.length > 0) {
+      var folder = DriveApp.getFolderById("${driveFolderId}");
+      for (var k = 0; k < data.files.length; k++) {
+        var f = data.files[k];
+        var blob = Utilities.newBlob(Utilities.base64Decode(f.base64), f.mimeType, f.name);
+        fileUrls.push(folder.createFile(blob).getUrl());
+      }
+    }
+
+    var rowData = [
+      timestamp,
+      "",
+      data.worker || "",
+${gasRowData}      data.note || "",
+      fileUrls.join(", ")
+    ];
+
+    var startRow = 5;
+    var targetRow = startRow;
+    var aVals = sheet.getRange("A5:A100").getValues();
+    for (var i = 0; i < aVals.length; i++) {
+      if (!aVals[i][0]) { targetRow = startRow + i; break; }
+    }
+
+    var rowRange = sheet.getRange(targetRow, 1, 1, rowData.length);
+    rowRange.setValues([rowData]);
+    rowRange.setBorder(true, true, true, true, true, true, "black", SpreadsheetApp.BorderStyle.SOLID);
+
+    return ContentService.createTextOutput(JSON.stringify({ result: "success" })).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ result: "error", error: error.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function onEdit(e) {
+  if (!e || !e.range) return;
+  var range = e.range;
+  var sheet = range.getSheet();
+  if (sheet.getName() !== "${sheetTitle}") return;
+  
+  var row = range.getRow();
+  var col = range.getColumn();
+  
+  if (row === 2 && (col >= APPROVAL_START_COL && col <= APPROVAL_END_COL)) {
+    var timeCell = sheet.getRange(3, col);
+    if (range.getValue() && range.getValue().toString().trim() !== "") {
+      if (!timeCell.getValue()) {
+        timeCell.setValue(Utilities.formatDate(new Date(), "Asia/Seoul", "yyyy-MM-dd HH:mm:ss"));
+        if (col === APPROVAL_END_COL) backupSpreadsheet();
+      }
+    } else {
+      timeCell.clearContent();
+    }
+  }
+  
+  if (row >= 5 && row <= 100) {
+    var lastCol = sheet.getLastColumn() || APPROVAL_END_COL;
+    var rowRange = sheet.getRange(row, 1, 1, lastCol);
+    var hasValue = rowRange.getValues()[0].some(cell => cell !== "" && cell !== null);
+    if (hasValue) {
+      rowRange.setBorder(true, true, true, true, true, true, "black", SpreadsheetApp.BorderStyle.SOLID);
+    } else {
+      rowRange.setBorder(false, false, false, false, false, false);
+    }
+  }
+}
+
+function submitInspection() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("${sheetTitle}");
+  var ui = SpreadsheetApp.getUi();
+  if (!sheet) return;
+  
+  var response = ui.alert('마감 확인', '점검표를 마감하시겠습니까?\\n백업본이 생성되고 현재 시트가 초기화됩니다.', ui.ButtonSet.YES_NO);
+  if (response !== ui.Button.YES) return;
+  
+  try {
+    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd_HHmmss");
+    DriveApp.getFileById(ss.getId()).makeCopy("${sheetTitle}_백업_" + today);
+    
+    sheet.getRange("${apprStartLetter}2:${apprEndLetter}3").clearContent();
+    var dataRange = sheet.getRange("A5:U100");
+    dataRange.clearContent();
+    dataRange.setBorder(false, false, false, false, false, false);
+    ui.alert("완료", "마감 및 백업이 완료되었습니다.", ui.ButtonSet.OK);
+  } catch (error) {
+    ui.alert("오류", error.toString(), ui.ButtonSet.OK);
+  }
+}
+
+function backupSpreadsheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  DriveApp.getFileById(ss.getId()).makeCopy(ss.getName() + "_백업_" + Utilities.formatDate(new Date(), "Asia/Seoul", "yyyyMMdd_HHmmss"));
+}
+
+function sendMonthlyReviewEmail() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("${sheetTitle}");
+  
+  var recipients = [
+    sheet.getRange(1, EMAIL_COL).getValue(),
+    sheet.getRange(2, EMAIL_COL).getValue(),
+    sheet.getRange(3, EMAIL_COL).getValue()
+  ].filter(email => email && email.toString().trim() !== "").join(",");
+  
+  if (!recipients) {
+    SpreadsheetApp.getUi().alert("${emailColLetter}열(1~3행)에 입력된 이메일 주소가 없습니다.");
+    return;
+  }
+
+  MailApp.sendEmail(recipients, "[점검표 알림] ${sheetTitle} 검토 요청", "${sheetTitle} 작성이 완료되었습니다.\\n\\n" + SpreadsheetApp.getActiveSpreadsheet().getUrl());
+  SpreadsheetApp.getUi().alert("이메일 발송이 완료되었습니다.");
+}`;
+
+    document.getElementById('guideContent').innerHTML = guideHTML;
+    document.getElementById('generatedHTML').textContent = resultHTML;
+    document.getElementById('generatedGAS').textContent = resultGAS;
+}
+
+// 초기 샘플 질문
+addQuestion("1.일일 안전 점검", "SECTION");
+addQuestion("소화기 정위치", "RADIO", "DAILY", "양호, 불량");
+addQuestion("2. 주간 점검", "SECTION");
+addQuestion("비상조명등 작동점검", "RADIO", "MON", "양호, 불량");
+addQuestion("일일 온도체크", "NUMBER", "DAILY", "", "℃");
+</script>
+</body>
+</html>
