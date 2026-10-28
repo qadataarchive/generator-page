@@ -1,547 +1,447 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>웹 폼 & Apps Script 통합 생성기 (설명서 포함 최종본)</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 950px; margin: 0 auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        h2, h3 { color: #1a73e8; border-bottom: 2px solid #e8f0fe; padding-bottom: 8px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 14px; }
-        input[type="text"], select { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 4px; border: 1px solid #ccc; border-radius: 5px; }
-        .help-text { font-size: 12px; color: #666; margin-bottom: 10px; line-height: 1.4; }
-        .question-item { border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #fafafa; position: relative; }
-        .question-item.section-type { background: #e8f0fe; border-color: #1a73e8; }
-        .options-box, .cycle-box { margin-top: 10px; padding: 10px; background: #eef2f5; border-radius: 5px; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        button { background-color: #1a73e8; color: white; border: none; padding: 10px 18px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 14px; }
-        button:hover { background-color: #1557b0; }
-        .btn-add { background-color: #34a853; margin-bottom: 15px; }
-        .btn-copy { background-color: #ff9800; margin-bottom: 10px; }
-        .btn-delete { background-color: #d93025; padding: 5px 10px; font-size: 12px; position: absolute; top: 10px; right: 10px; }
-        
-        .tab-menu { display: flex; gap: 5px; margin-top: 20px; border-bottom: 2px solid #1a73e8; }
-        .tab-btn { background: #e8f0fe; color: #1a73e8; border: none; padding: 10px 20px; border-radius: 6px 6px 0 0; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: #1a73e8; color: white; }
-        .tab-content { display: none; margin-top: 15px; }
-        .tab-content.active { display: block; }
-        
-        pre { background: #282c34; color: #abb2bf; padding: 15px; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; font-family: 'Consolas', monospace; font-size: 13px; }
-        
-        .guide-box { background: #f8f9fa; border: 1px solid #dadce0; border-radius: 8px; padding: 20px; line-height: 1.6; }
-        .guide-step { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #ccc; }
-        .guide-step:last-child { border-bottom: none; }
-        .guide-step h4 { margin: 0 0 10px 0; color: #1a73e8; font-size: 16px; }
-        .guide-step ol, .guide-step ul { margin: 5px 0; padding-left: 20px; }
-        .highlight { background: #e8f0fe; color: #1557b0; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .code-inline { background: #e9ecef; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>웹 폼 & Apps Script 통합 생성기</title>
+<style>
+  body { font-family: 'Segoe UI', 'Noto Sans KR', Tahoma, sans-serif; margin: 20px; background: #f4f6f9; color: #333; }
+  .container { max-width: 980px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+  h2, h3 { color: #1a73e8; border-bottom: 2px solid #e8f0fe; padding-bottom: 8px; }
+  label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 14px; }
+  input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 9px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+  .form-group { margin-bottom: 14px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .help { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.5; }
+  .question-item { border: 1px solid #e0e0e0; padding: 14px; margin-bottom: 12px; border-radius: 8px; background: #fafafa; position: relative; }
+  .question-item.section-type { background: #e8f0fe; border-color: #1a73e8; }
+  .sub-box { margin-top: 8px; padding: 8px; background: #eef2f5; border-radius: 5px; }
+  .q-tools { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
+  button { background: #1a73e8; color: #fff; border: none; padding: 9px 16px; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 14px; margin: 4px 4px 4px 0; }
+  button:hover { background: #1557b0; }
+  .btn-add { background: #34a853; }
+  .btn-small { padding: 4px 9px; font-size: 12px; background: #5f6368; }
+  .btn-del { background: #d93025; }
+  .btn-copy { background: #ff9800; }
+  .tab-menu { display: flex; gap: 5px; margin-top: 22px; border-bottom: 2px solid #1a73e8; flex-wrap: wrap; }
+  .tab-btn { background: #e8f0fe; color: #1a73e8; padding: 10px 16px; border-radius: 6px 6px 0 0; }
+  .tab-btn.active { background: #1a73e8; color: #fff; }
+  .tab-content { display: none; margin-top: 14px; }
+  .tab-content.active { display: block; }
+  pre { background: #282c34; color: #abb2bf; padding: 15px; border-radius: 6px; overflow: auto; white-space: pre; font-family: Consolas, monospace; font-size: 12px; max-height: 620px; }
+  .guide-box { background: #f8f9fa; border: 1px solid #dadce0; border-radius: 8px; padding: 20px; line-height: 1.7; font-size: 14px; }
+  .guide-box h4 { color: #1a73e8; margin: 22px 0 8px; font-size: 16px; }
+  .guide-box table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 13px; }
+  .guide-box th, .guide-box td { border: 1px solid #dadce0; padding: 6px 8px; text-align: left; vertical-align: top; }
+  .guide-box th { background: #e8f0fe; }
+  .code-inline { background: #e9ecef; padding: 1px 5px; border-radius: 3px; font-family: monospace; }
+  .highlight { background: #e8f0fe; color: #1557b0; padding: 1px 6px; border-radius: 4px; font-weight: bold; }
+  .warn { background: #fff4e5; border: 1px solid #ffb74d; padding: 10px 12px; border-radius: 6px; margin: 8px 0; }
+  .err-box { background: #fce8e6; border: 1px solid #d93025; color: #a50e0e; padding: 10px 14px; border-radius: 6px; margin-top: 12px; display: none; }
+  .tools-row { margin: 6px 0; }
+  .summary { font-size: 13px; color: #1557b0; margin-left: 8px; }
+</style>
 </head>
 <body>
-
 <div class="container">
-    <h2>🛠️ Web Form & Apps Script 통합 생성기 (최종 완성본)</h2>
-    
-    <div class="grid-2">
-        <div class="form-group">
-            <label>시트 제목</label>
-            <input type="text" id="sheetTitle" value="일일점검표(입고장)">
-        </div>
-        <div class="form-group">
-            <label>점검장소</label>
-            <input type="text" id="locationName" value="입고장">
-        </div>
-    </div>
+  <h2>🛠️ 웹 폼 & Apps Script 통합 생성기</h2>
 
-    <div class="grid-2">
-        <div class="form-group">
-            <label>비밀번호</label>
-            <input type="text" id="appPassword" value="261001">
-        </div>
-        <div class="form-group">
-            <label>Google Drive Folder ID (첨부파일 저장용)</label>
-            <input type="text" id="driveFolderId" placeholder="예: 1A2b3C4d5E6f7G8h9I0jKLMnOP">
-            <div class="help-text">
-                💡 <strong>Folder ID란?</strong> 첨부파일이 저장될 구글 드라이브 폴더의 고유 식별자입니다.<br>
-                📌 <strong>확인 방법:</strong> 구글 드라이브에서 해당 폴더에 들어간 뒤, 웹 브라우저 주소창 URL의 맨 뒤 값(<code>drive.google.com/drive/folders/<strong>이부분</strong></code>)을 복사해 붙여넣으세요.
-            </div>
-        </div>
-    </div>
+  <h3>① 기본 설정</h3>
+  <div class="grid-2">
+    <div class="form-group"><label for="sheetTitle">시트 이름 (스프레드시트 안 시트 탭 이름과 동일해야 함)</label><input type="text" id="sheetTitle" value="일일점검표(입고장)"></div>
+    <div class="form-group"><label for="locationName">점검장소</label><input type="text" id="locationName" value="입고장"></div>
+  </div>
+  <div class="grid-3">
+    <div class="form-group"><label for="appPassword">접속 비밀번호</label><input type="text" id="appPassword" value="261001"></div>
+    <div class="form-group"><label for="timeStart">정상 제출 시작 시각 (시)</label><input type="number" id="timeStart" min="0" max="23" value="8"></div>
+    <div class="form-group"><label for="timeEnd">정상 제출 종료 시각 (시, 이 시각 이상은 지연)</label><input type="number" id="timeEnd" min="1" max="24" value="9"></div>
+  </div>
+  <div class="form-group">
+    <label for="driveFolderId">Google Drive Folder ID (첨부 사진 저장 폴더)</label>
+    <input type="text" id="driveFolderId" value="1Uq59bPKvSg5CJ2-KoGnG4mEBuid22PdH">
+    <div class="help">📌 확인 방법: 구글 드라이브에서 사진 폴더를 열고, 주소창 <code>drive.google.com/drive/folders/<b>이 부분</b></code>을 복사합니다.</div>
+  </div>
+  <div class="form-group">
+    <label for="webAppUrl">Apps Script Web App URL (웹 폼 제출 + 대시보드 조회 공통)</label>
+    <input type="text" id="webAppUrl" value="https://script.google.com/macros/s/AKfycbzbSkLH6av6J_SL4Cds_trKhmTUTxHCHtktprsFzmiHFO6sJ0HNg9qxiXzOZhYNr4Kb/exec">
+    <div class="help">📌 확인 방법: 시트 [확장 프로그램] &gt; [Apps Script]에 코드를 넣고 [배포] &gt; [새 배포] &gt; 유형 "웹 앱"으로 배포하면 발급되는 주소(/exec로 끝남)입니다.</div>
+  </div>
 
-    <div class="form-group">
-        <label>Apps Script Web App URL (배포 후 입력)</label>
-        <input type="text" id="webAppUrl" placeholder="https://script.google.com/macros/s/.../exec">
-        <div class="help-text">
-            💡 <strong>Web App URL이란?</strong> 웹 폼 제출 데이터를 스프레드시트로 전송해 주는 서버 주소입니다.<br>
-            📌 <strong>확인 방법:</strong> 구글 시트 상단 메뉴 [확장 프로그램] > [Apps Script]에서 코드를 넣은 후, 오른쪽 상단 [배포] > [새 배포]를 완료하면 발급되는 URL입니다.
-        </div>
-    </div>
-
-    <h3>질문 항목 설정</h3>
-    <div id="questionsContainer"></div>
-
+  <h3>② 질문 설정</h3>
+  <div class="warn">질문 순서대로 시트 열이 배정됩니다. <b>소제목(구분)</b>은 열을 차지하지 않습니다. 질문을 추가·삭제·순서변경 하면 반드시 <b>전체 생성</b>을 다시 누르고, 새로 나온 웹 HTML과 Apps Script를 함께 교체하세요.</div>
+  <div id="questionsContainer"></div>
+  <div class="tools-row">
     <button type="button" class="btn-add" onclick="addQuestion()">+ 질문 추가</button>
-    <br><br>
-    <button type="button" onclick="generateAll()">전체 코드 및 설명서 생성하기</button>
+    <span class="summary" id="qSummary"></span>
+  </div>
+  <button type="button" onclick="generateAll()">▶ 전체 코드 및 설명서 생성하기</button>
+  <div class="err-box" id="errBox"></div>
 
-    <hr style="margin: 30px 0;">
+  <div class="tab-menu">
+    <button type="button" class="tab-btn active" onclick="openTab(event,'guideTab')">📖 4. 사용 설명서</button>
+    <button type="button" class="tab-btn" onclick="openTab(event,'htmlTab')">1. 웹 HTML 코드</button>
+    <button type="button" class="tab-btn" onclick="openTab(event,'gasTab')">2. Apps Script 코드</button>
+    <button type="button" class="tab-btn" onclick="openTab(event,'dashTab')">3. 대시보드 HTML 코드</button>
+  </div>
 
-    <div class="tab-menu">
-        <button class="tab-btn active" onclick="openTab(event, 'guideTab')">📖 사용 설명서</button>
-        <button class="tab-btn" onclick="openTab(event, 'htmlTab')">1. 웹 HTML 코드</button>
-        <button class="tab-btn" onclick="openTab(event, 'gasTab')">2. Apps Script 코드</button>
+  <div id="guideTab" class="tab-content active">
+    <div class="tools-row"><button type="button" class="btn-copy" onclick="downloadOne('guide')">사용 설명서 파일 저장(.html)</button></div>
+    <div class="guide-box" id="guideContent"><p>[전체 코드 및 설명서 생성하기]를 누르면 설정에 맞춘 설명서가 여기에 표시됩니다.</p></div>
+  </div>
+
+  <div id="htmlTab" class="tab-content">
+    <div class="tools-row">
+      <button type="button" class="btn-copy" onclick="copyOne('html')">HTML 코드 복사</button>
+      <button type="button" class="btn-small" onclick="downloadOne('html')">파일 저장(.html)</button>
     </div>
+    <pre id="outHtml"></pre>
+  </div>
 
-    <div id="guideTab" class="tab-content active">
-        <div class="guide-box" id="guideContent">
-            <p><strong>[전체 코드 및 설명서 생성하기]</strong> 버튼을 누르면 설정된 질문 개수에 맞춘 동적 열 가이드가 여기에 출력됩니다.</p>
-        </div>
+  <div id="gasTab" class="tab-content">
+    <div class="tools-row">
+      <button type="button" class="btn-copy" onclick="copyOne('gas')">Apps Script 코드 복사</button>
+      <button type="button" class="btn-small" onclick="downloadOne('gas')">파일 저장(.gs)</button>
     </div>
+    <pre id="outGas"></pre>
+  </div>
 
-    <div id="htmlTab" class="tab-content">
-        <button type="button" class="btn-copy" onclick="copyCode('generatedHTML')">HTML 코드 복사하기</button>
-        <pre><code id="generatedHTML"></code></pre>
+  <div id="dashTab" class="tab-content">
+    <div class="tools-row">
+      <button type="button" class="btn-copy" onclick="copyOne('dash')">대시보드 HTML 코드 복사</button>
+      <button type="button" class="btn-small" onclick="downloadOne('dash')">파일 저장(.html)</button>
     </div>
-
-    <div id="gasTab" class="tab-content">
-        <button type="button" class="btn-copy" onclick="copyCode('generatedGAS')">Apps Script 코드 복사하기</button>
-        <pre><code id="generatedGAS"></code></pre>
-    </div>
+    <pre id="outDash"></pre>
+  </div>
 </div>
 
-<script>
-function addQuestion(title = '', type = 'RADIO', cycle = 'DAILY', options = '양호, 불량', unit = '') {
-    const container = document.getElementById('questionsContainer');
-    const div = document.createElement('div');
-    div.className = 'question-item' + (type === 'SECTION' ? ' section-type' : '');
-    
-    div.innerHTML = `
-        <button type="button" class="btn-delete" onclick="this.parentElement.remove()">삭제</button>
-        <div class="grid-2">
-            <div>
-                <label>질문 제목</label>
-                <input type="text" class="q-title" value="${title}">
-            </div>
-            <div>
-                <label>질문 유형</label>
-                <select class="q-type" onchange="toggleOptions(this)">
-                    <option value="SECTION" ${type==='SECTION'?'selected':''}>📌 소제목 (구분선)</option>
-                    <option value="RADIO" ${type==='RADIO'?'selected':''}>객관식 (단일 선택)</option>
-                    <option value="CHECKBOX" ${type==='CHECKBOX'?'selected':''}>체크박스 (다중 선택)</option>
-                    <option value="TEXT" ${type==='TEXT'?'selected':''}>단답형 (텍스트)</option>
-                    <option value="NUMBER" ${type==='NUMBER'?'selected':''}>숫자 입력</option>
-                    <option value="TEXTAREA" ${type==='TEXTAREA'?'selected':''}>장문형</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="cycle-box">
-            <label>📅 작성 주기 설정</label>
-            <select class="q-cycle">
-                <option value="DAILY" ${cycle==='DAILY'?'selected':''}>매일 작성</option>
-                <option value="MON" ${cycle==='MON'?'selected':''}>월요일 전용 (주간)</option>
-                <option value="FRI" ${cycle==='FRI'?'selected':''}>금요일 전용 (주간)</option>
-                <option value="MONTH_1" ${cycle==='MONTH_1'?'selected':''}>매월 1일 전용 (월간)</option>
-            </select>
-        </div>
-
-        <div class="options-box">
-            <label>선택 옵션 (쉼표 구분)</label>
-            <input type="text" class="q-options" value="${options}">
-        </div>
-        <div class="unit-box" style="display:none; margin-top:5px;">
-            <label>단위 (예: ℃, %)</label>
-            <input type="text" class="q-unit" value="${unit}">
-        </div>
-    `;
-    container.appendChild(div);
-    toggleOptions(div.querySelector('.q-type'));
-}
-
-function toggleOptions(selectElem) {
-    const parent = selectElem.parentElement.parentElement.parentElement;
-    parent.querySelector('.options-box').style.display = (selectElem.value === 'RADIO' || selectElem.value === 'CHECKBOX') ? 'block' : 'none';
-    parent.querySelector('.unit-box').style.display = (selectElem.value === 'NUMBER') ? 'block' : 'none';
-    parent.querySelector('.cycle-box').style.display = (selectElem.value === 'SECTION') ? 'none' : 'block';
-    if (selectElem.value === 'SECTION') parent.classList.add('section-type');
-    else parent.classList.remove('section-type');
-}
-
-function openTab(evt, tabName) {
-    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
-    document.getElementById(tabName).classList.add('active');
-    evt.currentTarget.classList.add('active');
-}
-
-function copyCode(elementId) {
-    const code = document.getElementById(elementId).textContent;
-    if(!code || code.trim() === "") {
-        alert("먼저 코드를 생성해주세요!");
-        return;
-    }
-    navigator.clipboard.writeText(code).then(() => alert("코드가 클립보드에 복사되었습니다!"));
-}
-
-function colLetter(colNum) {
-    let letter = '';
-    while (colNum > 0) {
-        let remainder = (colNum - 1) % 26;
-        letter = String.fromCharCode(65 + remainder) + letter;
-        colNum = Math.floor((colNum - 1) / 26);
-    }
-    return letter;
-}
-
-function generateAll() {
-    const sheetTitle = document.getElementById('sheetTitle').value || '일일점검표(입고장)';
-    const location = document.getElementById('locationName').value || '입고장';
-    const appPassword = document.getElementById('appPassword').value || '261001';
-    const driveFolderId = document.getElementById('driveFolderId').value || 'YOUR_DRIVE_FOLDER_ID';
-    const url = document.getElementById('webAppUrl').value || 'YOUR_APPS_SCRIPT_URL';
-    const items = document.querySelectorAll('.question-item');
-
-    let itemsJS = '';
-    let itemsHTML = '';
-    let gasRowData = '';
-    let headerList = [];
-    let fieldCount = 0;
-
-    items.forEach((item) => {
-        const qTitle = item.querySelector('.q-title').value || '항목';
-        const qType = item.querySelector('.q-type').value;
-        const qCycle = item.querySelector('.q-cycle').value;
-        const qOptions = item.querySelector('.q-options').value;
-        const qUnit = item.querySelector('.q-unit').value;
-
-        if (qType === 'SECTION') {
-            itemsHTML += `    <div class="section-title">${qTitle}</div>\n`;
-            return;
-        }
-
-        fieldCount++;
-        const fieldId = `item${fieldCount}`;
-        headerList.push(qTitle);
-
-        let cycleNotice = '';
-        if (qCycle === 'MON') cycleNotice = '<span class="cycle-tag">[월요일 전용]</span>';
-        else if (qCycle === 'FRI') cycleNotice = '<span class="cycle-tag">[금요일 전용]</span>';
-        else if (qCycle === 'MONTH_1') cycleNotice = '<span class="cycle-tag">[매월 1일 전용]</span>';
-
-        if (qType === 'RADIO') {
-            const opts = qOptions.split(',').map(s => s.trim());
-            let radioBtns = opts.map(opt => `<label><input type="radio" name="${fieldId}" value="${opt}"> ${opt}</label>`).join(' ');
-            itemsHTML += `    <div class="check-item" data-cycle="${qCycle}">\n      <div><span>${qTitle}</span> ${cycleNotice}<div class="off-msg"></div></div>\n      <div class="radio-group">${radioBtns}</div>\n    </div>\n`;
-            itemsJS += `        "${qTitle}": getRadioValue("${fieldId}"),\n`;
-        } else if (qType === 'NUMBER') {
-            itemsHTML += `    <div class="check-item" data-cycle="${qCycle}">\n      <div><span>${qTitle}</span> ${cycleNotice}<div class="off-msg"></div></div>\n      <div class="input-wrap"><input type="number" id="${fieldId}" class="input-inline" placeholder="숫자 입력"> <span class="unit-text">${qUnit}</span></div>\n    </div>\n`;
-            itemsJS += `        "${qTitle}": document.getElementById("${fieldId}").disabled ? "-" : (document.getElementById("${fieldId}").value ? document.getElementById("${fieldId}").value + "${qUnit}" : "-"),\n`;
-        } else if (qType === 'TEXT') {
-            itemsHTML += `    <div class="form-group check-item-wrap" data-cycle="${qCycle}">\n      <label>${qTitle} ${cycleNotice} <span class="off-msg"></span></label>\n      <input type="text" id="${fieldId}">\n    </div>\n`;
-            itemsJS += `        "${qTitle}": document.getElementById("${fieldId}").disabled ? "-" : (document.getElementById("${fieldId}").value || "-"),\n`;
-        } else if (qType === 'TEXTAREA') {
-            itemsHTML += `    <div class="form-group check-item-wrap" data-cycle="${qCycle}">\n      <label>${qTitle} ${cycleNotice} <span class="off-msg"></span></label>\n      <textarea id="${fieldId}"></textarea>\n    </div>\n`;
-            itemsJS += `        "${qTitle}": document.getElementById("${fieldId}").disabled ? "-" : (document.getElementById("${fieldId}").value || "-"),\n`;
-        }
-
-        gasRowData += `      items["${qTitle}"] || "-",\n`;
-    });
-
-    const totalQuestions = headerList.length;
-    const noteColIdx = 3 + totalQuestions + 1;
-    const fileColIdx = noteColIdx + 1;
-    const approvalStartCol = fileColIdx + 1;
-    const approvalEndCol = approvalStartCol + 2;
-    const emailColIdx = approvalEndCol + 1;
-
-    const apprStartLetter = colLetter(approvalStartCol);
-    const apprEndLetter = colLetter(approvalEndCol);
-    const emailColLetter = colLetter(emailColIdx);
-    const noteColLetter = colLetter(noteColIdx);
-    const fileColLetter = colLetter(fileColIdx);
-
-    let headerGuideText = headerList.map((h, i) => `<span class="code-inline">${colLetter(4+i)}열: ${h}</span>`).join(', ');
-
-    const guideHTML = `
-        <div class="guide-step">
-            <h4>📌 1단계: 구글 스프레드시트 구조 (동적 반영됨)</h4>
-            <ul>
-                <li>시트 이름: <span class="highlight">${sheetTitle}</span></li>
-                <li><strong>결재란 영역:</strong> <span class="code-inline">${apprStartLetter}2:${apprEndLetter}3</span> (2행 이름, 3행 시간 자동기록)</li>
-                <li><strong>4행 헤더 배치:</strong>
-                    <ul>
-                        <li><span class="code-inline">A4: 제출일시</span>, <span class="code-inline">B4: 구분</span>, <span class="code-inline">C4: 작성자</span></li>
-                        <li><strong>질문 열:</strong> ${headerGuideText}</li>
-                        <li><span class="code-inline">${noteColLetter}4: 특이사항</span></li>
-                        <li><span class="code-inline">${fileColLetter}4: 첨부파일</span></li>
-                    </ul>
-                </li>
-                <li><strong>월말 결재요청 이메일 주소 입력셀:</strong> <span class="code-inline">${emailColLetter}1, ${emailColLetter}2, ${emailColLetter}3</span> 셀에 수신자 이메일을 입력하세요.</li>
-            </ul>
-        </div>
-        <div class="guide-step">
-            <h4>📌 2단계: Apps Script 코드 적용 및 배포</h4>
-            <ol>
-                <li>[Apps Script 코드] 탭의 전체 코드를 복사해 시트의 <span class="highlight">확장 프로그램 > Apps Script</span>(<span class="code-inline">Code.gs</span>)에 붙여넣고 저장하세요.</li>
-                <li>오른쪽 상단 <span class="highlight">배포 > 새 배포</span> 클릭 (웹 앱, 나, 모든 사용자 권한 설정) 후 발급된 URL을 복사하여 상단 칸에 입력하세요.</li>
-            </ol>
-        </div>
-    `;
-
-    const resultHTML = `<!DOCTYPE html>
+<script type="text/plain" id="tpl-html">
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📋 ${sheetTitle}</title>
+  <title>__SHEET_TITLE__</title>
   <style>
-    body { font-family: 'Noto Sans KR', sans-serif; background: #f8f9fa; margin: 0; padding: 20px; color: #333; }
+    :root { --primary-color: #1a73e8; --border-color: #dadce0; --bg-color: #f8f9fa; }
+    body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: #333; }
     .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; }
-    h2 { text-align: center; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; color: #202124; }
+    h2 { text-align: center; color: #202124; margin-bottom: 24px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
     .form-group { margin-bottom: 18px; }
     label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 14px; }
-    input[type="text"], input[type="number"], input[type="file"], textarea { width: 100%; padding: 10px; border: 1px solid #dadce0; border-radius: 6px; box-sizing: border-box; }
+    input[type="text"], input[type="file"], textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 14px; }
     input[readonly] { background-color: #e9ecef; color: #495057; cursor: not-allowed; }
     textarea { resize: vertical; height: 80px; }
-    .section-title { font-weight: bold; background: #e8f0fe; padding: 8px 12px; border-radius: 4px; margin-top: 20px; color: #1967d2; }
-    .check-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f3f4; }
-    .radio-group label { font-weight: normal; margin-left: 10px; cursor: pointer; }
+    .section-title { font-weight: bold; background: #e8f0fe; padding: 8px 12px; border-radius: 4px; margin-top: 20px; margin-bottom: 12px; color: #1967d2; font-size: 15px; }
+    .check-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f3f4; gap: 10px; }
+    .check-item-title { font-size: 14px; flex: 1; }
+    .radio-group, .check-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    .radio-group label, .check-group label { font-weight: normal; margin: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
     .input-wrap { display: flex; align-items: center; gap: 6px; }
-    .input-inline { width: 100px !important; text-align: right; padding: 8px 10px !important; margin: 0 !important; }
+    .input-inline { width: 120px; text-align: right; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; }
+    .text-inline { width: 55%; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; }
     .unit-text { font-size: 14px; font-weight: bold; color: #555; white-space: nowrap; }
-    .disabled-item { background-color: #f1f3f4; opacity: 0.6; padding: 10px; border-radius: 6px; pointer-events: none; }
     .cycle-tag { font-size: 11px; color: #e65100; font-weight: bold; margin-left: 5px; }
     .off-msg { font-size: 11px; color: #757575; margin-top: 2px; }
-    .btn-submit { width: 100%; background: #1a73e8; color: #fff; padding: 14px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 24px; }
+    .disabled-item { background-color: #f1f3f4; opacity: 0.6; padding: 10px; border-radius: 6px; pointer-events: none; }
+    .btn-submit { width: 100%; background-color: var(--primary-color); color: #fff; padding: 14px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 24px; }
+    .btn-submit:hover { background-color: #1557b0; }
+    .btn-submit:disabled { background-color: #ccc; cursor: not-allowed; }
   </style>
 </head>
 <body>
 
 <div class="container" id="mainContainer">
-  <h2>📋 ${sheetTitle}</h2>
+  <h2>📋 __SHEET_TITLE__</h2>
   <form id="checkForm">
-    <div class="form-group"><label>점검장소</label><input type="text" id="location" value="${location}" readonly></div>
-    <div class="form-group"><label>작성자</label><input type="text" id="worker" required placeholder="성함 입력"></div>
-${itemsHTML}
-    <div class="form-group" style="margin-top: 20px;"><label>특이사항</label><textarea id="note" placeholder="특이사항이 있을 경우 작성해주세요."></textarea></div>
-    <div class="form-group"><label>사진 첨부 (최대 10개)</label><input type="file" id="photo" accept="image/*" multiple></div>
+    <div class="form-group">
+      <label for="location">점검장소</label>
+      <input type="text" id="location" value="__LOCATION__" readonly>
+    </div>
+    <div class="form-group">
+      <label for="worker">작성자</label>
+      <input type="text" id="worker" required placeholder="성함 입력">
+    </div>
+__FORM_BODY__
+    <div class="form-group" style="margin-top: 20px;">
+      <label for="note">특이사항</label>
+      <textarea id="note" placeholder="특이사항이 있을 경우 작성해주세요."></textarea>
+    </div>
+    <div class="form-group">
+      <label for="photo">사진 첨부 (최대 10개)</label>
+      <input type="file" id="photo" accept="image/*" multiple>
+    </div>
     <button type="submit" id="submitBtn" class="btn-submit">제출하기</button>
   </form>
 </div>
 
 <script>
-  const APP_PASSWORD = "${appPassword}";
-  const GAS_WEB_APP_URL = "${url}";
+  var APP_PASSWORD = __PASSWORD_JS__;
+  var GAS_WEB_APP_URL = __WEBAPP_URL_JS__;
+  var LOCATION_DEFAULT = __LOCATION_JS__;
+  var ITEM_DEFS = __ITEM_DEFS_JS__;
 
-  (function initPage() {
-    const pwd = prompt("점검표를 작성하려면 비밀번호를 입력하세요:");
-    if (pwd !== APP_PASSWORD) {
+  var form = document.getElementById("checkForm");
+
+  (function authenticate() {
+    var pwd = prompt("점검표를 작성하려면 비밀번호를 입력하세요:");
+    if (pwd === APP_PASSWORD) {
+      document.getElementById("mainContainer").style.display = "block";
+      applyCycleControls();
+    } else {
       alert("비밀번호가 올바르지 않습니다. 접근이 제한됩니다.");
       document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#d93025;'>접근 권한이 없습니다.<br>페이지를 새로고침하여 비밀번호를 다시 입력하세요.</h2>";
-      return;
     }
-    document.getElementById("mainContainer").style.display = "block";
-    applyCycleControls();
   })();
 
   function applyCycleControls() {
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    const dateNum = today.getDate();
-
-    document.querySelectorAll('[data-cycle]').forEach(item => {
-      const cycle = item.getAttribute('data-cycle');
-      let isOff = false;
-      let msg = "";
-
-      if (cycle === 'MON' && dayOfWeek !== 1) { isOff = true; msg = "오늘 작성일이 아닙니다 (매주 월요일 작성)"; }
-      else if (cycle === 'FRI' && dayOfWeek !== 5) { isOff = true; msg = "오늘 작성일이 아닙니다 (매주 금요일 작성)"; }
-      else if (cycle === 'MONTH_1' && dateNum !== 1) { isOff = true; msg = "오늘 작성일이 아닙니다 (매월 1일 작성)"; }
-
-      if (isOff) {
-        item.classList.add('disabled-item');
-        item.querySelectorAll('input, select, textarea').forEach(input => input.disabled = true);
-        const msgBox = item.querySelector('.off-msg');
-        if (msgBox) msgBox.innerText = "🔒 " + msg + " -> [해당없음(-)]으로 자동 제출됩니다.";
+    var today = new Date();
+    var dow = today.getDay();
+    var dom = today.getDate();
+    document.querySelectorAll('[data-cycle]').forEach(function (row) {
+      var cycle = row.getAttribute('data-cycle');
+      var off = false;
+      var msg = "";
+      if (cycle === 'MON' && dow !== 1) { off = true; msg = "오늘 작성일이 아닙니다 (매주 월요일 작성)"; }
+      else if (cycle === 'FRI' && dow !== 5) { off = true; msg = "오늘 작성일이 아닙니다 (매주 금요일 작성)"; }
+      else if (cycle === 'MONTH_1' && dom !== 1) { off = true; msg = "오늘 작성일이 아닙니다 (매월 1일 작성)"; }
+      if (off) {
+        row.classList.add('disabled-item');
+        row.querySelectorAll('input, select, textarea').forEach(function (el) { el.disabled = true; });
+        var box = row.querySelector('.off-msg');
+        if (box) box.innerText = "🔒 " + msg + " -> [해당없음(-)]으로 자동 제출됩니다.";
       }
     });
   }
 
+  function isOff(def) {
+    var el = document.querySelector('[name="' + def.id + '"]');
+    return !!(el && el.disabled);
+  }
+
   function getRadioValue(name) {
-    const anyEl = document.querySelector(\`input[name="\${name}"]\`);
-    if (anyEl && anyEl.disabled) return "-";
-    const el = document.querySelector(\`input[name="\${name}"]:checked\`);
+    var el = document.querySelector('input[name="' + name + '"]:checked');
     return el ? el.value : "";
   }
 
+  function getCheckboxValue(name) {
+    return Array.prototype.map.call(document.querySelectorAll('input[name="' + name + '"]:checked'), function (el) { return el.value; }).join(", ");
+  }
+
+  function readItemValue(def) {
+    if (isOff(def)) return "-";
+    if (def.type === 'RADIO') return getRadioValue(def.id);
+    if (def.type === 'CHECKBOX') return getCheckboxValue(def.id);
+    var v = document.getElementById(def.id).value.trim();
+    if (def.type === 'NUMBER') return v ? v + def.unit : "";
+    return v;
+  }
+
   function getFormattedTimestamp() {
-    const now = new Date();
-    const pad = (n) => String(n).padStart(2, '0');
-    return \`\${now.getFullYear()}\${pad(now.getMonth() + 1)}\${pad(now.getDate())}_\${pad(now.getHours())}\${pad(now.getMinutes())}\${pad(now.getSeconds())}\`;
+    var now = new Date();
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    return now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate()) + "_" + pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
   }
 
   function fileToBase64(file, newFileName) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve({ base64: reader.result.split(',')[1], mimeType: file.type, name: newFileName });
-      reader.onerror = error => reject(error);
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () { resolve({ base64: reader.result.split(',')[1], mimeType: file.type, name: newFileName }); };
+      reader.onerror = reject;
       reader.readAsDataURL(file);
     });
   }
 
-  document.getElementById("checkForm").addEventListener("submit", async function(e) {
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const activeRadios = Array.from(document.querySelectorAll('.check-item:not(.disabled-item) input[type="radio"]'));
-    const radioNames = [...new Set(activeRadios.map(r => r.name))];
-    for (let name of radioNames) {
-      if (!document.querySelector(\`input[name="\${name}"]:checked\`)) {
-        alert("모든 활성화된 점검 항목을 체크해 주세요.");
-        const target = document.querySelector(\`input[name="\${name}"]\`);
+    for (var i = 0; i < ITEM_DEFS.length; i++) {
+      var d = ITEM_DEFS[i];
+      if (d.type === 'RADIO' && !isOff(d) && !getRadioValue(d.id)) {
+        alert("모든 점검 항목을 체크해 주세요.");
+        var target = document.querySelector('input[name="' + d.id + '"]');
         if (target) target.focus();
         return;
       }
     }
 
-    const files = Array.from(document.getElementById("photo").files);
+    var files = Array.prototype.slice.call(document.getElementById("photo").files);
     if (files.length > 10) { alert("사진은 최대 10개까지만 첨부할 수 있습니다."); return; }
 
-    const submitBtn = document.getElementById("submitBtn");
-    submitBtn.disabled = true; submitBtn.innerText = "제출 중...";
+    var submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "제출 중...";
 
-    const locationVal = document.getElementById("location").value.trim();
-    const workerVal = document.getElementById("worker").value.trim();
-    const timestamp = getFormattedTimestamp();
+    var locationVal = document.getElementById("location").value.trim();
+    var workerVal = document.getElementById("worker").value.trim();
+    var timestamp = getFormattedTimestamp();
 
     try {
-      const filePromises = files.map((file, index) => {
-        const extMatch = file.name.match(/\\.[^/.]+$/);
-        const ext = extMatch ? extMatch[0] : "";
-        const seq = files.length > 1 ? \`_\${index + 1}\` : "";
-        return fileToBase64(file, \`\${locationVal}_\${timestamp}_\${workerVal}\${seq}\${ext}\`);
-      });
+      var processedFiles = await Promise.all(files.map(function (file, index) {
+        var extMatch = file.name.match(/\.[^\/.]+$/);
+        var ext = extMatch ? extMatch[0] : "";
+        var seq = files.length > 1 ? "_" + (index + 1) : "";
+        return fileToBase64(file, locationVal + "_" + timestamp + "_" + workerVal + seq + ext);
+      }));
 
-      const processedFiles = await Promise.all(filePromises);
-
-      const payload = {
+      var payload = {
         location: locationVal,
         worker: workerVal,
         note: document.getElementById("note").value,
         files: processedFiles,
-        items: { ${itemsJS.replace(/\n\s+/g, ' ')} }
+        values: ITEM_DEFS.map(readItemValue)
       };
 
-      const response = await fetch(GAS_WEB_APP_URL, {
-        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      var response = await fetch(GAS_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
       });
+      var data = await response.json();
 
-      const data = await response.json();
       if (data.result === "success") {
         alert("점검표 제출이 성공적으로 완료되었습니다!");
-        document.getElementById("checkForm").reset();
-        document.getElementById("location").value = "${location}";
-      } else { alert("오류: " + data.error); }
-    } catch (error) {
-      alert("네트워크 오류가 발생했습니다."); console.error(error);
+        form.reset();
+        document.getElementById("location").value = LOCATION_DEFAULT;
+        applyCycleControls();
+      } else {
+        alert("제출 중 오류가 발생했습니다: " + data.error);
+      }
+    } catch (err) {
+      alert("네트워크 오류가 발생했습니다. 앱스크립트 배포 상태를 확인해주세요.");
+      console.error("Error:", err);
     } finally {
-      submitBtn.disabled = false; submitBtn.innerText = "제출하기";
+      submitBtn.disabled = false;
+      submitBtn.innerText = "제출하기";
     }
   });
 <\/script>
 </body>
-</html>`;
-
-    const resultGAS = `// ==========================================
-// 동적 열 설정 상수 (${totalQuestions}개 질문 기준)
+</html>
+</script>
+<script type="text/plain" id="tpl-gas">
 // ==========================================
-const APPROVAL_START_COL = ${approvalStartCol}; // 결재란 시작 열 (${apprStartLetter}열)
-const APPROVAL_END_COL = ${approvalEndCol};     // 결재란 끝 열 (${apprEndLetter}열)
-const EMAIL_COL = ${emailColIdx};               // 이메일 주소 시작 열 (${emailColLetter}열)
+// 점검표 설정 상수 (질문 __ITEM_COUNT__개 기준으로 자동 계산됨)
+// ==========================================
+var SHEET_NAME = __SHEET_NAME_JS__;               // 시트 탭 이름
+var DRIVE_FOLDER_ID = __FOLDER_ID_JS__;           // 사진 저장 드라이브 폴더 ID
+var ITEM_COUNT = __ITEM_COUNT__;                  // 질문 개수 (소제목 제외)
+var NOTE_COL = __NOTE_COL__;                      // 특이사항 열 (__NOTE_LETTER__열)
+var FILE_COL = __FILE_COL__;                      // 첨부파일 열 (__FILE_LETTER__열)
+var APPROVAL_START_COL = __APPR_START__;          // 결재란 시작 열 (__APPR_START_LETTER__열)
+var APPROVAL_END_COL = __APPR_END__;              // 결재란 끝 열 (__APPR_END_LETTER__열)
+var EMAIL_COL = __EMAIL_COL__;                    // 메일 수신자 주소 열 (__EMAIL_LETTER__열, 1~3행)
+var DATA_START_ROW = 5;                           // 데이터 시작 행
+var DATA_END_ROW = 100;                           // 데이터 마지막 행
+var TIME_ZONE = "Asia/Seoul";
 
+// ==========================================
+// 1. 시트 열 때 커스텀 메뉴 생성
+// ==========================================
 function onOpen() {
-  var ui = SpreadsheetApp.getUi();
-  ui.createMenu('📋 점검표 관리')
+  SpreadsheetApp.getUi().createMenu('📋 점검표 관리')
     .addItem('🚀 점검표 제출 (마감)', 'submitInspection')
     .addSeparator()
     .addItem('📩 메일 수동발송', 'sendMonthlyReviewEmail')
     .addToUi();
 }
 
+// ==========================================
+// 2. 웹 폼 제출 데이터 수신 (doPost)
+// ==========================================
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName("${sheetTitle}");
-    
-    if (!sheet) {
-      return ContentService.createTextOutput(JSON.stringify({ result: "error", error: "시트를 찾을 수 없습니다." })).setMimeType(ContentService.MimeType.JSON);
+    var sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet) return jsonOut({ result: "error", error: "'" + SHEET_NAME + "' 시트를 찾을 수 없습니다." });
+
+    var values = data.values || [];
+    if (values.length !== ITEM_COUNT) {
+      return jsonOut({ result: "error", error: "질문 개수 불일치 (웹폼 " + values.length + "개 / 앱스크립트 " + ITEM_COUNT + "개). 웹 HTML과 Apps Script를 같은 설정으로 다시 생성해 교체하세요." });
     }
 
-    var timestamp = new Date();
-    var items = data.items || {};
+    // 사진 저장
     var fileUrls = [];
-
     if (data.files && data.files.length > 0) {
-      var folder = DriveApp.getFolderById("${driveFolderId}");
-      for (var k = 0; k < data.files.length; k++) {
-        var f = data.files[k];
-        var blob = Utilities.newBlob(Utilities.base64Decode(f.base64), f.mimeType, f.name);
-        fileUrls.push(folder.createFile(blob).getUrl());
+      var folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+      for (var f = 0; f < data.files.length; f++) {
+        var fileObj = data.files[f];
+        var blob = Utilities.newBlob(Utilities.base64Decode(fileObj.base64), fileObj.mimeType, fileObj.name);
+        var created = folder.createFile(blob);
+        created.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        fileUrls.push(created.getUrl());
       }
     }
 
-    var rowData = [
-      timestamp,
-      "",
-      data.worker || "",
-${gasRowData}      data.note || "",
-      fileUrls.join(", ")
-    ];
+    // 행 데이터: A 제출일시, B 구분(빈칸), C 작성자, 질문들, 특이사항, 첨부파일
+    var rowData = [new Date(), "", data.worker || ""];
+    for (var i = 0; i < ITEM_COUNT; i++) rowData.push(values[i] || "");
+    rowData.push(data.note || "");
+    rowData.push(fileUrls.join("\n"));
 
-    var startRow = 5;
-    var targetRow = startRow;
-    var aVals = sheet.getRange("A5:A100").getValues();
-    for (var i = 0; i < aVals.length; i++) {
-      if (!aVals[i][0]) { targetRow = startRow + i; break; }
-    }
-
+    var targetRow = findFirstEmptyRow(sheet);
     var rowRange = sheet.getRange(targetRow, 1, 1, rowData.length);
     rowRange.setValues([rowData]);
     rowRange.setBorder(true, true, true, true, true, true, "black", SpreadsheetApp.BorderStyle.SOLID);
 
-    return ContentService.createTextOutput(JSON.stringify({ result: "success" })).setMimeType(ContentService.MimeType.JSON);
+    return jsonOut({ result: "success" });
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ result: "error", error: error.toString() })).setMimeType(ContentService.MimeType.JSON);
+    return jsonOut({ result: "error", error: error.toString() });
   }
 }
 
-function onEdit(e) {
+function findFirstEmptyRow(sheet) {
+  var aValues = sheet.getRange(DATA_START_ROW, 1, DATA_END_ROW - DATA_START_ROW + 1, 1).getValues();
+  for (var i = 0; i < aValues.length; i++) {
+    if (aValues[i][0] === "" || aValues[i][0] === null) return DATA_START_ROW + i;
+  }
+  throw new Error("입력 가능한 빈 행이 없습니다. (" + DATA_START_ROW + "~" + DATA_END_ROW + "행 사용 중) 마감 처리를 해주세요.");
+}
+
+// 대시보드 조회용 (doGet): 시트 전체 값을 JSON으로 반환
+function doGet() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  var data = sheet ? sheet.getDataRange().getValues() : [];
+  return jsonOut(data);
+}
+
+function jsonOut(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ==========================================
+// 3. 설치형 트리거: 결재 시간 기록 / 백업 / 표 테두리
+//    (반드시 installTriggers로 등록해야 Drive 백업이 동작합니다)
+// ==========================================
+function onEditInstalled(e) {
   if (!e || !e.range) return;
   var range = e.range;
   var sheet = range.getSheet();
-  if (sheet.getName() !== "${sheetTitle}") return;
-  
+  if (sheet.getName() !== SHEET_NAME) return;
+
   var row = range.getRow();
   var col = range.getColumn();
-  
-  if (row === 2 && (col >= APPROVAL_START_COL && col <= APPROVAL_END_COL)) {
+
+  // 1) 결재란: 2행 이름 입력 → 3행에 시간 기록
+  if (row === 2 && col >= APPROVAL_START_COL && col <= APPROVAL_END_COL) {
     var timeCell = sheet.getRange(3, col);
-    if (range.getValue() && range.getValue().toString().trim() !== "") {
+    var nameValue = range.getValue();
+    if (nameValue !== null && nameValue.toString().trim() !== "") {
       if (!timeCell.getValue()) {
-        timeCell.setValue(Utilities.formatDate(new Date(), "Asia/Seoul", "yyyy-MM-dd HH:mm:ss"));
-        if (col === APPROVAL_END_COL) backupSpreadsheet();
+        timeCell.setValue(Utilities.formatDate(new Date(), TIME_ZONE, "yyyy-MM-dd HH:mm:ss"));
+        SpreadsheetApp.flush();
+        if (col === APPROVAL_END_COL) backupSpreadsheet();   // 최종 결재란 입력 시 백업
       }
     } else {
       timeCell.clearContent();
     }
   }
-  
-  if (row >= 5 && row <= 100) {
-    var lastCol = sheet.getLastColumn() || APPROVAL_END_COL;
-    var rowRange = sheet.getRange(row, 1, 1, lastCol);
-    var hasValue = rowRange.getValues()[0].some(cell => cell !== "" && cell !== null);
+
+  // 2) 데이터 행: 값이 있으면 테두리, 전부 지워지면 테두리 제거
+  if (row >= DATA_START_ROW && row <= DATA_END_ROW) {
+    var rowRange = sheet.getRange(row, 1, 1, FILE_COL);
+    var hasValue = rowRange.getValues()[0].some(function (cell) { return cell !== "" && cell !== null; });
     if (hasValue) {
       rowRange.setBorder(true, true, true, true, true, true, "black", SpreadsheetApp.BorderStyle.SOLID);
     } else {
@@ -550,63 +450,753 @@ function onEdit(e) {
   }
 }
 
+// 실행 1회: 기존 편집 트리거(onEditTrigger, onEditInstalled)를 지우고 설치형 onEdit 1개만 등록
+// 월말 메일 자동발송 트리거는 건드리지 않습니다 (기존 설정 유지)
+function installTriggers() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    var fn = t.getHandlerFunction();
+    if (fn === 'onEditInstalled' || fn === 'onEditTrigger') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('onEditInstalled').forSpreadsheet(SpreadsheetApp.getActive()).onEdit().create();
+  notify("편집 트리거 설치가 완료되었습니다.");
+}
+
+// ==========================================
+// 4. [마감 버튼] 백업 후 결재란·데이터 초기화
+// ==========================================
 function submitInspection() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("${sheetTitle}");
+  var sheet = ss.getSheetByName(SHEET_NAME);
   var ui = SpreadsheetApp.getUi();
-  if (!sheet) return;
-  
-  var response = ui.alert('마감 확인', '점검표를 마감하시겠습니까?\\n백업본이 생성되고 현재 시트가 초기화됩니다.', ui.ButtonSet.YES_NO);
+  if (!sheet) { ui.alert("오류", "'" + SHEET_NAME + "' 시트를 찾을 수 없습니다.", ui.ButtonSet.OK); return; }
+
+  var response = ui.alert('마감 확인', '점검표 작성을 완료하고 제출(마감)하시겠습니까?\n마감 시 전체 백업본이 생성되고 현재 시트는 초기화됩니다.', ui.ButtonSet.YES_NO);
   if (response !== ui.Button.YES) return;
-  
+
   try {
-    var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyyMMdd_HHmmss");
-    DriveApp.getFileById(ss.getId()).makeCopy("${sheetTitle}_백업_" + today);
-    
-    sheet.getRange("${apprStartLetter}2:${apprEndLetter}3").clearContent();
-    var dataRange = sheet.getRange("A5:U100");
+    var backupName = SHEET_NAME + "_백업_" + Utilities.formatDate(new Date(), TIME_ZONE, "yyyyMMdd_HHmmss");
+    DriveApp.getFileById(ss.getId()).makeCopy(backupName);
+
+    // 결재란(2~3행) 초기화
+    sheet.getRange(2, APPROVAL_START_COL, 2, APPROVAL_END_COL - APPROVAL_START_COL + 1).clearContent();
+
+    // 데이터 영역 초기화
+    var dataRange = sheet.getRange(DATA_START_ROW, 1, DATA_END_ROW - DATA_START_ROW + 1, FILE_COL);
     dataRange.clearContent();
     dataRange.setBorder(false, false, false, false, false, false);
-    ui.alert("완료", "마감 및 백업이 완료되었습니다.", ui.ButtonSet.OK);
+
+    ui.alert("제출 완료", "백업 파일이 생성되었으며, 시트가 초기화되었습니다.\n\n백업 파일명: " + backupName, ui.ButtonSet.OK);
   } catch (error) {
-    ui.alert("오류", error.toString(), ui.ButtonSet.OK);
+    ui.alert("오류 발생", "처리 중 오류가 발생했습니다: " + error.toString(), ui.ButtonSet.OK);
   }
 }
 
+// ==========================================
+// 5. Google Drive 파일 백업
+// ==========================================
 function backupSpreadsheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  DriveApp.getFileById(ss.getId()).makeCopy(ss.getName() + "_백업_" + Utilities.formatDate(new Date(), "Asia/Seoul", "yyyyMMdd_HHmmss"));
+  DriveApp.getFileById(ss.getId()).makeCopy(ss.getName() + "_백업_" + Utilities.formatDate(new Date(), TIME_ZONE, "yyyyMMdd_HHmmss"));
 }
 
+// ==========================================
+// 6. 이메일 발송 (E열 기준 1~3행 주소 사용)
+// ==========================================
 function sendMonthlyReviewEmail() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("${sheetTitle}");
-  
-  var recipients = [
-    sheet.getRange(1, EMAIL_COL).getValue(),
-    sheet.getRange(2, EMAIL_COL).getValue(),
-    sheet.getRange(3, EMAIL_COL).getValue()
-  ].filter(email => email && email.toString().trim() !== "").join(",");
-  
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) { notify("'" + SHEET_NAME + "' 시트를 찾을 수 없습니다."); return; }
+
+  var recipients = [1, 2, 3].map(function (r) { return sheet.getRange(r, EMAIL_COL).getValue(); })
+    .filter(function (email) { return email && email.toString().trim() !== ""; })
+    .join(",");
+
   if (!recipients) {
-    SpreadsheetApp.getUi().alert("${emailColLetter}열(1~3행)에 입력된 이메일 주소가 없습니다.");
+    notify(colLetterOf(EMAIL_COL) + "열(1~3행)에 입력된 이메일 주소가 없습니다.");
     return;
   }
 
-  MailApp.sendEmail(recipients, "[점검표 알림] ${sheetTitle} 검토 요청", "${sheetTitle} 작성이 완료되었습니다.\\n\\n" + SpreadsheetApp.getActiveSpreadsheet().getUrl());
-  SpreadsheetApp.getUi().alert("이메일 발송이 완료되었습니다.");
-}`;
-
-    document.getElementById('guideContent').innerHTML = guideHTML;
-    document.getElementById('generatedHTML').textContent = resultHTML;
-    document.getElementById('generatedGAS').textContent = resultGAS;
+  MailApp.sendEmail(recipients, "[점검표 알림] " + SHEET_NAME + " 검토 요청",
+    SHEET_NAME + " 작성이 완료되었습니다. 아래 링크를 참조하세요.\n\n" + ss.getUrl());
+  notify("이메일 발송이 완료되었습니다.");
 }
 
-// 초기 샘플 질문
-addQuestion("1.일일 안전 점검", "SECTION");
-addQuestion("소화기 정위치", "RADIO", "DAILY", "양호, 불량");
-addQuestion("2. 주간 점검", "SECTION");
-addQuestion("비상조명등 작동점검", "RADIO", "MON", "양호, 불량");
-addQuestion("일일 온도체크", "NUMBER", "DAILY", "", "℃");
+// 월말 전날(다음 날이 1일)이면 자동 발송
+function autoSendMonthlyReviewEmail() {
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  if (tomorrow.getDate() === 1) sendMonthlyReviewEmail();
+}
+
+// 트리거 실행 시에는 UI가 없으므로 로그로 대체
+function notify(msg) {
+  try { SpreadsheetApp.getUi().alert(msg); } catch (e) { Logger.log(msg); }
+}
+
+function colLetterOf(n) {
+  var s = "";
+  while (n > 0) { var r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); }
+  return s;
+}
+</script>
+<script type="text/plain" id="tpl-dash">
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__TITLE__ 예외 대시보드</title>
+    <style>
+        :root { --primary: #1a73e8; --bg: #f8f9fa; --card-bg: #ffffff; --text-main: #202124; --text-sub: #5f6368; --border: #dfe1e5; --danger-bg: #fce8e6; --danger-color: #c5221f; --success-bg: #e6f4ea; --success-color: #137333; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); padding: 16px; -webkit-font-smoothing: antialiased; max-width: 600px; margin: 0 auto; }
+        header { margin-bottom: 20px; text-align: center; }
+        header h1 { font-size: 1.2rem; color: var(--primary); margin-bottom: 4px; }
+        header p { font-size: 0.8rem; color: var(--text-sub); }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 0.8rem; color: var(--text-sub); }
+        .btn-refresh { background-color: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+        .log-container { display: flex; flex-direction: column; gap: 12px; }
+        .log-card { background: var(--card-bg); border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 5px solid var(--success-color); }
+        .log-card.has-issue { border-left-color: var(--danger-color); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+        .card-date { font-size: 0.85rem; font-weight: bold; color: var(--text-main); }
+        .card-date.time-warning { color: var(--danger-color); }
+        .card-worker { font-size: 0.8rem; color: var(--text-sub); }
+        .card-body { font-size: 0.85rem; }
+        .all-clear { display: inline-flex; align-items: center; gap: 4px; background-color: var(--success-bg); color: var(--success-color); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+        .issue-title { font-size: 0.75rem; color: var(--danger-color); font-weight: bold; margin-bottom: 4px; }
+        .issue-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+        .issue-badge { background-color: var(--danger-bg); color: var(--danger-color); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+        .normal-badge { background-color: var(--success-bg); color: var(--success-color); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+        .loading, .error { text-align: center; padding: 40px; color: var(--text-sub); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>[__TITLE__] 예외 관리 대시보드</h1>
+        <p>모바일 실시간 자동 연동 뷰</p>
+    </header>
+    <div class="controls">
+        <span id="update-time">데이터 동기화 대기 중...</span>
+        <button class="btn-refresh" onclick="loadSheetData()">새로고침</button>
+    </div>
+    <div class="log-container" id="log-container">
+        <div class="loading">구글 시트 데이터를 불러오는 중입니다...</div>
+    </div>
+
+    <script>
+        var WEB_APP_URL = __WEBAPP_URL_JS__;
+        // 점검 항목 설정 (질문 설정에서 자동 생성됨). index = 시트 열 번호(A=0)
+        var COLUMNS = __COLUMNS_JSON__;
+        var TIME_START = __TIME_START__;   // 정상 제출 시작 시각(시)
+        var TIME_END = __TIME_END__;       // 이 시각 이상이면 지연 표시
+        var NORMAL_VALUES = ["양호", "없음", "적정", "정상", "해당없음", "-"];
+
+        function parseSubmitTime(rawDateStr) {
+            var formatted = rawDateStr;
+            var hours = NaN;
+            if (rawDateStr.indexOf("T") !== -1 || rawDateStr.indexOf("Z") !== -1) {
+                var d = new Date(rawDateStr);
+                if (!isNaN(d.getTime())) {
+                    var pad = function (n) { return String(n).padStart(2, '0'); };
+                    hours = d.getHours();
+                    formatted = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " + pad(hours) + ":" + pad(d.getMinutes());
+                } else {
+                    formatted = rawDateStr.replace("T", " ").substring(0, 16);
+                }
+            } else if (rawDateStr.length > 16) {
+                formatted = rawDateStr.substring(0, 16);
+                var timePart = formatted.split(" ")[1];
+                if (timePart && timePart.indexOf(":") !== -1) hours = parseInt(timePart.split(":")[0], 10);
+            }
+            return { text: formatted, hours: hours };
+        }
+
+        async function loadSheetData() {
+            var container = document.getElementById("log-container");
+            var timeSpan = document.getElementById("update-time");
+            try {
+                var response = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
+                var rows = await response.json();
+                if (!rows || rows.length < 5) {
+                    container.innerHTML = '<div class="error">표시에 필요한 데이터가 없습니다.</div>';
+                    return;
+                }
+                var headers = rows[3];
+                var dataRows = rows.slice(4).reverse();
+                var htmlContent = "";
+
+                dataRows.forEach(function (row) {
+                    if (!row[0] || String(row[0]).trim() === "") return;
+
+                    var t = parseSubmitTime(String(row[0]).trim());
+                    var isTimeOutOfRange = !isNaN(t.hours) && (t.hours < TIME_START || t.hours >= TIME_END);
+                    var worker = row[2] ? String(row[2]).trim() : "미지정";
+                    var issues = [];
+                    var normalDisplays = [];
+
+                    COLUMNS.forEach(function (col) {
+                        var val = String(row[col.index] === undefined ? "" : row[col.index]).trim();
+                        var title = String(headers[col.index] || col.title).trim();
+                        if (val === "") return;
+
+                        if (col.type === 'NUMBER') {
+                            var num = parseFloat(val.replace(/[^0-9.\-]/g, ""));
+                            if (isNaN(num)) { normalDisplays.push(title + ": " + val); return; }
+                            if (col.unit === '%' && num > 0 && num < 1) num = Math.round(num * 100);
+                            var display = num + col.unit;
+                            if (col.limit !== null && num > col.limit) {
+                                issues.push(title + " 초과: " + display + " (기준 " + col.limit + col.unit + ")");
+                            } else {
+                                normalDisplays.push(title + ": " + display + (col.limit !== null ? " (정상)" : ""));
+                            }
+                        } else {
+                            if (NORMAL_VALUES.indexOf(val) === -1) issues.push(title + ": " + val);
+                        }
+                    });
+
+                    var hasIssue = issues.length > 0;
+                    htmlContent += '<div class="log-card ' + (hasIssue ? 'has-issue' : '') + '">' +
+                        '<div class="card-header">' +
+                        '<span class="card-date ' + (isTimeOutOfRange ? 'time-warning' : '') + '">' + t.text + '</span>' +
+                        '<span class="card-worker">작업자: ' + worker + '</span></div>' +
+                        '<div class="card-body">' +
+                        (hasIssue
+                            ? '<div class="issue-title">⚠️ 조치 필요 항목 발생</div>' +
+                              '<div class="issue-list">' +
+                              issues.map(function (x) { return '<span class="issue-badge">' + x + '</span>'; }).join('') +
+                              normalDisplays.map(function (x) { return '<span class="normal-badge">' + x + '</span>'; }).join('') +
+                              '</div>'
+                            : '<div class="issue-list" style="margin-top: 0;">' +
+                              '<div class="all-clear" style="margin-bottom: 6px;">✓ 전체 항목 이상 없음 (정상)</div>' +
+                              '<div>' + normalDisplays.map(function (x) { return '<span class="normal-badge">' + x + '</span>'; }).join('') + '</div>' +
+                              '</div>') +
+                        '</div></div>';
+                });
+
+                if (htmlContent === "") {
+                    container.innerHTML = '<div class="error">표시할 유효한 점검 데이터가 없습니다.</div>';
+                    return;
+                }
+                container.innerHTML = htmlContent;
+                var now = new Date();
+                var p2 = function (n) { return String(n).padStart(2, '0'); };
+                timeSpan.innerText = "마지막 동기화: " + p2(now.getHours()) + ":" + p2(now.getMinutes()) + ":" + p2(now.getSeconds());
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div class="error">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+            }
+        }
+
+        loadSheetData();
+    <\/script>
+</body>
+</html>
+</script>
+<script id="core">
+// ===== 순수 생성 로직 (DOM 접근 없음) =====
+var DEFAULT_QUESTIONS = [
+  { title: "1. 안전 점검", type: "SECTION" },
+  { title: "소화기 정위치", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "시건장치 잠금기능", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "화재 위험 노출 여부", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "2. 5S 점검", type: "SECTION" },
+  { title: "청소상태", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "자재 정위치 적재", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "불필요한 물건 여부", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "입고제품 포장상태", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "부적합 제품 혼합 여부", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "3. 품질 점검", type: "SECTION" },
+  { title: "품질이상 발생 자재 여부", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "주기적 환기", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "실내온도 관리", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "4. 기타 점검", type: "SECTION" },
+  { title: "빗물 침수 여부", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "담당자외 출입 통제", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "입고제품 식별 용이성", type: "RADIO", cycle: "DAILY", options: "양호, 불량" },
+  { title: "일일 온도체크", type: "NUMBER", cycle: "DAILY", unit: "℃", limit: "30" },
+  { title: "일일 습도체크", type: "NUMBER", cycle: "DAILY", unit: "%", limit: "60" }
+];
+
+function esc(s) {
+  return String(s === undefined || s === null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function jsStr(s) {
+  return JSON.stringify(String(s === undefined || s === null ? "" : s)).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
+}
+function jsonForJs(o) {
+  return JSON.stringify(o).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
+}
+function colLetter(n) {
+  var s = "";
+  while (n > 0) { var r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); }
+  return s;
+}
+function splitOpts(s) {
+  return String(s || "").split(",").map(function (x) { return x.trim(); }).filter(function (x) { return x !== ""; });
+}
+function replaceTokens(text, pairs) {
+  var out = text;
+  pairs.forEach(function (p) { out = out.split(p[0]).join(p[1]); });
+  return out;
+}
+function cycleLabel(c) {
+  if (c === "MON") return "[월요일 전용]";
+  if (c === "FRI") return "[금요일 전용]";
+  if (c === "MONTH_1") return "[매월 1일 전용]";
+  return "";
+}
+
+// 질문 → 시트 열 배치 계산 (질문 개수에 따라 모든 위치가 자동으로 달라짐)
+function computeLayout(questions) {
+  var items = questions.filter(function (q) { return q.type !== "SECTION"; });
+  var N = items.length;
+  var noteCol = 4 + N;           // 질문 열 다음이 특이사항
+  var fileCol = 5 + N;           // 그 다음이 첨부파일
+  var L = {
+    N: N,
+    noteCol: noteCol,
+    fileCol: fileCol,
+    apprStart: noteCol - 2,      // 결재란: 특이사항 기준 왼쪽 3칸 (현재 운영본: R2:T3)
+    apprEnd: noteCol,
+    emailCol: fileCol + 1        // 메일 주소 칸: 첨부파일 바로 오른쪽 (현재 운영본: V1:V3)
+  };
+  L.letters = {
+    note: colLetter(noteCol), file: colLetter(fileCol),
+    apprStart: colLetter(L.apprStart), apprEnd: colLetter(L.apprEnd), email: colLetter(L.emailCol)
+  };
+  return { items: items, layout: L };
+}
+
+function validateConfig(cfg) {
+  var errs = [];
+  if (!cfg.sheetTitle) errs.push("시트 이름을 입력하세요.");
+  var items = cfg.questions.filter(function (q) { return q.type !== "SECTION"; });
+  if (items.length < 3) errs.push("질문(소제목 제외)은 최소 3개 이상이어야 합니다. (결재란 3칸 배치 기준)");
+  cfg.questions.forEach(function (q, i) {
+    if (!q.title) errs.push((i + 1) + "번 항목: 제목이 비어 있습니다.");
+    if ((q.type === "RADIO" || q.type === "CHECKBOX") && splitOpts(q.options).length < 1) {
+      errs.push("'" + q.title + "': 선택 옵션을 한 개 이상 입력하세요.");
+    }
+  });
+  if (!(cfg.timeStart >= 0 && cfg.timeEnd <= 24 && cfg.timeStart < cfg.timeEnd)) {
+    errs.push("정상 제출 시각 범위를 확인하세요. (시작 < 종료, 0~24)");
+  }
+  return errs;
+}
+
+function buildAll(cfg, tpl) {
+  var errors = validateConfig(cfg);
+  if (errors.length) return { errors: errors };
+
+  var calc = computeLayout(cfg.questions);
+  var items = calc.items;
+  var L = calc.layout;
+  var sheetTitle = cfg.sheetTitle;
+  var location = cfg.location || "";
+  var folderId = cfg.folderId || "YOUR_DRIVE_FOLDER_ID";
+  var url = cfg.webAppUrl || "YOUR_APPS_SCRIPT_URL";
+
+  // ---------- 1. 웹 HTML ----------
+  var itemDefs = [];
+  var columns = [];
+  var formBody = "";
+  var k = 0;
+  cfg.questions.forEach(function (q) {
+    if (q.type === "SECTION") {
+      formBody += '    <div class="section-title">' + esc(q.title) + "</div>\n";
+      return;
+    }
+    k++;
+    var id = "item" + k;
+    var cy = q.cycle || "DAILY";
+    var tag = cycleLabel(cy) ? ' <span class="cycle-tag">' + cycleLabel(cy) + "</span>" : "";
+    var titleHtml = '<div class="check-item-title"><span>' + esc(q.title) + "</span>" + tag + '<div class="off-msg"></div></div>';
+    itemDefs.push({ id: id, type: q.type, unit: q.unit || "" });
+    columns.push({
+      title: q.title, index: 2 + k, type: q.type, unit: q.unit || "",
+      limit: (q.type === "NUMBER" && q.limit !== "" && q.limit !== undefined && !isNaN(parseFloat(q.limit))) ? parseFloat(q.limit) : null
+    });
+
+    if (q.type === "RADIO" || q.type === "CHECKBOX") {
+      var inputType = q.type === "RADIO" ? "radio" : "checkbox";
+      var opts = splitOpts(q.options).map(function (o, idx) {
+        var req = (q.type === "RADIO" && idx === 0) ? " required" : "";
+        return '<label><input type="' + inputType + '" name="' + id + '" value="' + esc(o) + '"' + req + "> " + esc(o) + "</label>";
+      }).join("\n        ");
+      var groupCls = q.type === "RADIO" ? "radio-group" : "check-group";
+      formBody += '    <div class="check-item" data-cycle="' + cy + '">\n      ' + titleHtml + "\n      <div class=\"" + groupCls + "\">\n        " + opts + "\n      </div>\n    </div>\n";
+    } else if (q.type === "NUMBER") {
+      formBody += '    <div class="check-item" data-cycle="' + cy + '">\n      ' + titleHtml +
+        '\n      <div class="input-wrap"><input type="number" id="' + id + '" name="' + id + '" class="input-inline" placeholder="숫자 입력" required> <span class="unit-text">' + esc(q.unit) + "</span></div>\n    </div>\n";
+    } else if (q.type === "TEXT") {
+      formBody += '    <div class="check-item" data-cycle="' + cy + '">' + titleHtml +
+        '<input type="text" id="' + id + '" name="' + id + '" class="text-inline"></div>\n';
+    } else if (q.type === "TEXTAREA") {
+      formBody += '    <div class="form-group" data-cycle="' + cy + '">' + titleHtml +
+        '<textarea id="' + id + '" name="' + id + '"></textarea></div>\n';
+    }
+  });
+
+  var htmlOut = replaceTokens(tpl.html, [
+    ["__SHEET_TITLE__", esc(sheetTitle)],
+    ["__LOCATION__", esc(location)],
+    ["__LOCATION_JS__", jsStr(location)],
+    ["__PASSWORD_JS__", jsStr(cfg.password)],
+    ["__WEBAPP_URL_JS__", jsStr(url)],
+    ["__ITEM_DEFS_JS__", jsonForJs(itemDefs)],
+    ["__FORM_BODY__", formBody]
+  ]).split("<\\/script>").join("<\/script>");
+
+  // ---------- 2. Apps Script ----------
+  var gasOut = replaceTokens(tpl.gas, [
+    ["__ITEM_COUNT__", String(L.N)],
+    ["__SHEET_NAME_JS__", jsStr(sheetTitle)],
+    ["__FOLDER_ID_JS__", jsStr(folderId)],
+    ["__NOTE_COL__", String(L.noteCol)],
+    ["__FILE_COL__", String(L.fileCol)],
+    ["__APPR_START__", String(L.apprStart)],
+    ["__APPR_END__", String(L.apprEnd)],
+    ["__EMAIL_COL__", String(L.emailCol)],
+    ["__NOTE_LETTER__", L.letters.note],
+    ["__FILE_LETTER__", L.letters.file],
+    ["__APPR_START_LETTER__", L.letters.apprStart],
+    ["__APPR_END_LETTER__", L.letters.apprEnd],
+    ["__EMAIL_LETTER__", L.letters.email]
+  ]);
+
+  // ---------- 3. 대시보드 ----------
+  var dashOut = replaceTokens(tpl.dash, [
+    ["__TITLE__", esc(sheetTitle)],
+    ["__WEBAPP_URL_JS__", jsStr(url)],
+    ["__COLUMNS_JSON__", jsonForJs(columns.filter(function (c) { return c.type !== "TEXT" && c.type !== "TEXTAREA"; }))],
+    ["__TIME_START__", String(cfg.timeStart)],
+    ["__TIME_END__", String(cfg.timeEnd)]
+  ]).split("<\\/script>").join("<\/script>");
+
+  return {
+    html: htmlOut,
+    gas: gasOut,
+    dash: dashOut,
+    guide: buildGuide(cfg, items, L, sheetTitle, location, url, folderId)
+  };
+}
+</script>
+<script id="guide-core">
+// ===== 사용설명서 생성 (설정값 반영) =====
+function buildGuide(cfg, items, L, sheetTitle, location, url, folderId) {
+  var lt = L.letters;
+  var cols = [];
+  cols.push({ c: "A", h: "제출일시", d: "앱이 자동 입력 (제출 순간의 날짜·시간)" });
+  cols.push({ c: "B", h: "구분", d: "비워 둠 (자동 입력 없음)" });
+  cols.push({ c: "C", h: "작성자", d: "웹 폼의 '작성자' 칸" });
+  items.forEach(function (q, i) {
+    var letter = colLetter(4 + i);
+    var kind = q.type === "NUMBER" ? "숫자 (" + (q.unit || "단위 없음") + ")" :
+      q.type === "RADIO" ? "객관식: " + splitOpts(q.options).join(" / ") :
+      q.type === "CHECKBOX" ? "다중선택: " + splitOpts(q.options).join(" / ") :
+      q.type === "TEXT" ? "단답형 텍스트" : "장문형 텍스트";
+    cols.push({ c: letter, h: q.title, d: kind + (q.cycle && q.cycle !== "DAILY" ? " / 작성주기: " + cycleLabel(q.cycle) : "") + (q.type === "TEXT" || q.type === "TEXTAREA" ? " (대시보드 판정 제외)" : "") });
+  });
+  cols.push({ c: lt.note, h: "특이사항", d: "웹 폼의 '특이사항' 칸" });
+  cols.push({ c: lt.file, h: "첨부파일", d: "사진 드라이브 링크 (행 안에서 줄바꿈으로 구분)" });
+
+  var colRows = cols.map(function (x) {
+    return "<tr><td><span class=\"code-inline\">" + x.c + "열</span></td><td>" + esc(x.h) + "</td><td>" + esc(x.d) + "</td></tr>";
+  }).join("");
+
+  var s = "";
+  s += "<h4>0. 전체 구조 한눈에 보기</h4>";
+  s += "<p>이 생성기는 <b>질문 목록 하나</b>를 기준으로 4가지 결과물을 만듭니다. ① 웹 HTML(직원이 점검표를 작성하는 페이지), ② Apps Script(시트에 저장·마감·메일·백업을 처리하는 서버 코드), ③ 대시보드 HTML(시트 데이터를 모바일에서 예외 위주로 보여주는 페이지), ④ 이 설명서입니다. 세 코드는 <b>같은 설정</b>에서 나왔기 때문에 열 위치와 질문 순서가 서로 맞습니다. 그래서 질문을 바꾸면 세 코드를 모두 새로 생성해서 교체해야 합니다.</p>";
+  s += "<p>현재 설정은 질문 <b>" + L.N + "개</b>이며, 데이터 열은 <span class=\"code-inline\">A ~ " + lt.file + "</span>열까지 사용합니다.</p>";
+
+  s += "<h4>1. 용어 설명 (입력 칸별 의미와 확인 방법)</h4>";
+  s += "<table><tr><th>입력 칸</th><th>무엇인가</th><th>확인·준비 방법</th></tr>";
+  s += "<tr><td>시트 이름</td><td>구글 스프레드시트 <b>아래쪽 탭 이름</b>입니다. 앱스크립트가 이 이름으로 시트를 찾으므로 한 글자도 다르면 안 됩니다. 현재 값: <span class=\"highlight\">" + esc(sheetTitle) + "</span></td><td>탭 이름을 우클릭 &gt; [이름 바꾸기]에서 같은 이름으로 맞추세요. 괄호·공백도 그대로 씁니다.</td></tr>";
+  s += "<tr><td>점검장소</td><td>웹 폼 상단에 고정 표시되는 장소명(읽기 전용)입니다. 현재 값: " + esc(location) + "</td><td>장소가 바뀌면 생성기에서 바꾼 뒤 다시 생성하세요.</td></tr>";
+  s += "<tr><td>비밀번호</td><td>웹 폼을 열 때 한 번 묻는 간단한 잠금입니다. 페이지 소스에 그대로 들어가므로 <b>보안 수준은 낮습니다</b>. 외부 유출을 막는 용도가 아니라 실수로 열리는 것을 막는 용도로 보세요.</td><td>숫자·영문 조합으로 정하고, 바꾸면 웹 HTML을 다시 생성해 배포하세요.</td></tr>";
+  s += "<tr><td>Google Drive Folder ID</td><td>직원이 첨부한 사진이 저장될 드라이브 폴더의 고유 번호입니다. 현재 값: " + esc(folderId) + "</td><td>구글 드라이브에서 사진 폴더를 열고, 주소창 <code>drive.google.com/drive/folders/</code> 뒤의 문자열을 복사합니다. 앱스크립트를 실행하는 계정이 그 폴더의 <b>편집 권한</b>을 가져야 합니다.</td></tr>";
+  s += "<tr><td>Apps Script Web App URL</td><td>하나의 서버 주소로 두 가지 일을 합니다.<br>① <b>쓰기</b>: 웹 폼에서 제출하면 이 주소로 데이터가 와서 스프레드시트 마지막 행에 기록됩니다.<br>② <b>읽기</b>: 대시보드가 이 주소로 요청하면 스프레드시트 내용을 돌려주고, 대시보드가 그걸 화면에 그립니다.<br>즉 흐름은 <b>웹 폼 → 스프레드시트 기록 → 대시보드 출력</b>이며, 두 페이지 모두 같은 주소를 쓰면 됩니다. 현재 값: " + esc(url) + "</td><td>시트에서 [확장 프로그램] &gt; [Apps Script]를 열고 코드를 넣은 뒤 [배포] &gt; [새 배포] &gt; 유형 <b>웹 앱</b>, 실행 사용자 <b>나</b>, 액세스 권한 <b>모든 사용자</b>로 배포합니다. 발급된 URL을 웹 HTML과 대시보드 HTML에 넣습니다.<br><b>주의:</b> [새 배포]를 다시 하면 URL이 바뀌어 기존 웹 폼과 대시보드가 동작하지 않습니다. 코드만 고쳤다면 [배포 관리] &gt; 연필 아이콘 &gt; [새 버전]으로 같은 URL을 유지하세요.</td></tr>";
+  s += "<tr><td>정상 제출 시각</td><td>대시보드에서 제출 시각을 빨간 글씨로 표시하는 기준입니다. 시작 " + cfg.timeStart + "시 이상 " + cfg.timeEnd + "시 미만이 정상이고, 그 밖의 시각은 지연으로 표시됩니다.</td><td>업무 시간 규칙이 바뀌면 생성기에서 바꿔 대시보드를 다시 생성하세요.</td></tr>";
+  s += "<tr><td>질문 제목 / 유형 / 작성 주기 / 옵션 / 단위 / 기준값</td><td>유형: 소제목(열 없음), 객관식(한 개 선택), 체크박스(여러 개), 단답형, 숫자, 장문형. 작성 주기는 매일·월요일·금요일·매월 1일 중 하나이며, 해당 요일이 아니면 웹 폼에서 자동으로 '해당없음(-)' 처리됩니다. 숫자 항목의 <b>기준값</b>을 넘으면 대시보드에 '초과'로 뜹니다.</td><td>기준값을 비우면 초과 판정을 하지 않고 값만 보여줍니다. 단위 %는 0~1 사이 값을 자동으로 100배 해석합니다.</td></tr>";
+  s += "</table>";
+
+  s += "<h4>2. 스프레드시트 구성 (질문 개수에 따라 자동 계산된 배열)</h4>";
+  s += "<p>헤더는 <b>4행</b>에 씁니다. 데이터는 <b>5행부터 100행까지</b> 자동으로 빈 행을 찾아 쌓이며(최대 96건), 마감 버튼을 누르면 백업 후 5~100행이 비워집니다.</p>";
+  s += "<table><tr><th>열</th><th>4행 헤더(제목)</th><th>내용 / 설명</th></tr>" + colRows + "</table>";
+  s += "<p><b>결재란과 메일 칸의 위치 (자동 계산)</b></p><ul>";
+  s += "<li>결재란 영역: <span class=\"code-inline\">" + lt.apprStart + "2:" + lt.apprEnd + "3</span> (2행에 이름 입력 → 3행에 시간 자동 기록). 최종 결재란은 <span class=\"code-inline\">" + lt.apprEnd + "2</span>이며, 여기 이름을 넣으면 백업이 자동 실행됩니다. 결재란은 특이사항 열 기준 왼쪽 3칸으로 고정 배치되므로, 질문 수가 바뀌면 함께 이동합니다.</li>";
+  s += "<li>메일 수신자 칸: <span class=\"code-inline\">" + lt.email + "1</span>, <span class=\"code-inline\">" + lt.email + "2</span>, <span class=\"code-inline\">" + lt.email + "3</span>에 주소를 넣으면 월말 검토 메일 수신자가 됩니다. 첨부파일 열 바로 오른쪽 칸입니다.</li>";
+  s += "<li>결재란 영역(2~3행)과 데이터 영역(5행 이후)은 겹치지 않으므로 같은 열을 함께 써도 됩니다.</li></ul>";
+
+  s += "<h4>3. 스프레드시트 준비 순서</h4><ol>";
+  s += "<li>새 구글 스프레드시트를 만들고, 아래쪽 탭 이름을 <span class=\"highlight\">" + esc(sheetTitle) + "</span>로 바꿉니다.</li>";
+  s += "<li>4행에 위 표의 헤더를 열 순서대로 입력합니다. A4 '제출일시', B4 '구분', C4 '작성자'를 시작으로, 질문 제목이 한 칸씩 오른쪽으로 이어지고, 마지막이 특이사항·첨부파일입니다. 제목은 웹 폼의 질문 제목과 똑같이 쓰는 것이 좋습니다(대시보드 표시에 사용됩니다).</li>";
+  s += "<li>결재란(" + lt.apprStart + "2:" + lt.apprEnd + "3)에 필요하면 결재자 이름을 준비하고, 메일 칸(" + lt.email + "1~3)에 수신자를 입력합니다.</li>";
+  s += "<li>1~3행의 나머지 칸(A~" + lt.file + "열)은 비워 두세요. 데이터는 5행부터 들어갑니다.</li></ol>";
+
+  s += "<h4>4. Apps Script 적용 및 배포 (앱스크립트 코드 탭의 전체 코드 사용)</h4><ol>";
+  s += "<li>시트에서 [확장 프로그램] &gt; [Apps Script]를 열고 기존 코드를 모두 지운 뒤 생성된 코드를 붙여넣고 저장합니다.</li>";
+  s += "<li>코드 상단의 함수 선택 목록에서 <b>installTriggers</b>를 고르고 [실행]을 누릅니다. 처음 한 번은 권한 허용 창이 뜨니 계정을 선택하고 허용합니다. 이 단계로 시트 편집 시의 결재 시간 기록과 최종 결재 시 자동 백업 트리거가 등록됩니다. 예전에 설치한 편집 트리거는 자동으로 지워져 중복되지 않습니다. <b>월말 메일 자동 발송 트리거는 건드리지 않으므로</b> 기존 설정이 그대로 유지됩니다.</li>";
+  s += "<li>[배포] &gt; [새 배포] &gt; 유형 <b>웹 앱</b>, 설명 자유, 실행 사용자 <b>나</b>, 액세스 권한 <b>모든 사용자</b>로 배포하고 발급된 URL을 복사합니다.</li>";
+  s += "<li>그 URL을 생성기의 Web App URL 칸에 넣고 다시 생성한 뒤, 웹 HTML과 대시보드 HTML에 적용합니다.</li></ol>";
+  s += "<div class=\"warn\"><b>참고:</b> 메뉴의 [점검표 제출 (마감)]은 시트에 직접 열었을 때만 동작합니다. 시트 열기 시 생기는 [📋 점검표 관리] 메뉴가 보이지 않으면 페이지를 새로고침하세요.</div>";
+
+  s += "<h4>5. 웹 HTML (직원용 점검표) 사용 방법</h4><ul>";
+  s += "<li>생성된 HTML 파일을 저장하고 직원에게 공유합니다. 내부 공유 드라이브, 사내 웹서버, 또는 구글 사이트에 올려 링크로 열 수 있습니다. 파일을 그대로 PC에서 더블클릭해도 동작합니다.</li>";
+  s += "<li>페이지를 열면 비밀번호를 묻고, 맞으면 점검표가 나타납니다. 주기가 맞지 않는 항목은 자동으로 회색 처리되고 '[해당없음(-)]'으로 제출됩니다.</li>";
+  s += "<li>사진은 최대 10장까지 첨부되며, 드라이브에 '점검장소_날짜시간_작성자' 이름으로 저장됩니다.</li>";
+  s += "<li>제출이 성공하면 폼이 초기화되고, 실패하면 이유가 메시지로 표시됩니다.</li></ul>";
+
+  s += "<h4>6. 대시보드 HTML (모바일 예외 관리) 사용 방법</h4><ul>";
+  s += "<li>같은 Web App URL을 쓰므로 Apps Script를 한 번 배포하면 두 페이지 모두 같은 데이터를 봅니다.</li>";
+  s += "<li>최신 제출이 위에 오고, 기준을 벗어난 항목은 빨간색 '조치 필요'로 묶입니다. 시각이 정상 범위를 벗어나면 날짜가 빨간색입니다.</li>";
+  s += "<li>판정 기준: 객관식은 '양호·없음·적정·정상·해당없음·-'이 아니면 이상, 숫자는 기준값 초과 시 이상입니다. 단답형·장문형은 판정하지 않습니다.</li>";
+  s += "<li>대시보드 조회 URL 뒤에 붙는 값은 캐시 방지용이므로 바꿀 필요가 없습니다. 화면 상단 [새로고침]으로 최신 데이터를 봅니다.</li></ul>";
+
+  s += "<h4>7. 질문을 바꿀 때 (요약, 자세한 절차는 10번)</h4><ol>";
+  s += "<li>먼저 시트를 복사(백업)해 둡니다. 열이 바뀌면 기존 데이터가 옆 열과 어긋날 수 있습니다.</li>";
+  s += "<li>생성기에서 질문을 고치고 [전체 코드 및 설명서 생성하기]를 누릅니다. 질문 수가 바뀌면 결재란·특이사항·첨부파일·메일 칸 위치도 자동으로 바뀝니다.</li>";
+  s += "<li>시트 4행 헤더와 열 위치를 새 설명서 표에 맞게 옮깁니다.</li>";
+  s += "<li>Apps Script 코드를 교체해 저장하고 [배포] &gt; [배포 관리] &gt; 연필 &gt; [새 버전]으로 같은 URL에 반영합니다.</li>";
+  s += "<li>웹 HTML과 대시보드 HTML을 새로 생성해 교체합니다. 세 가지 중 하나라도 빠지면 '질문 개수 불일치' 오류가 납니다.</li></ol>";
+
+  s += "<h4>8. 자주 생기는 문제</h4><table><tr><th>증상</th><th>원인과 해결</th></tr>";
+  s += "<tr><td>'시트를 찾을 수 없습니다'</td><td>탭 이름과 생성기의 시트 이름이 다릅니다. 둘을 똑같이 맞추고 다시 생성하세요.</td></tr>";
+  s += "<tr><td>'질문 개수 불일치'</td><td>웹 HTML과 Apps Script가 서로 다른 설정에서 나왔습니다. 두 개를 같은 생성 결과로 교체하세요.</td></tr>";
+  s += "<tr><td>사진이 드라이브에 없음</td><td>Folder ID가 틀렸거나 실행 계정에 폴더 편집 권한이 없습니다.</td></tr>";
+  s += "<tr><td>대시보드가 비어 있음</td><td>Web App URL이 다르거나, 4행 헤더가 비어 있거나, 배포 액세스가 '모든 사용자'가 아닐 때 생깁니다.</td></tr>";
+  s += "<tr><td>메일이 가지 않음</td><td>메일 칸(" + lt.email + "1~3)이 비었거나 Gmail 일일 발송 한도를 넘었을 수 있습니다. [📩 메일 수동발송]으로 확인하세요.</td></tr>";
+  s += "<tr><td>백업이 두 번 생김</td><td>installTriggers를 여러 번 실행해 트리거가 중복된 경우입니다. 함수를 다시 한 번 실행하면 기존 트리거를 지우고 한 번만 등록합니다.</td></tr>";
+  s += "<tr><td>마감 후 입력이 안 됨</td><td>5~100행이 모두 찼을 때 나옵니다. [점검표 제출 (마감)]을 실행해 백업 후 초기화하세요.</td></tr></table>";
+
+  s += "<h4>9. 확인 필요 및 보안 참고</h4><ul>";
+  s += "<li>Web App은 '모든 사용자' 액세스이므로 URL을 아는 사람은 시트 전체 데이터를 조회할 수 있습니다. 민감한 정보가 없다면 괜찮지만, 필요하면 조회 함수에 비밀번호 확인을 추가하는 것을 권장합니다.</li>";
+  s += "<li>웹 폼의 비밀번호는 페이지 소스에 노출되므로 간단한 잠금 수준입니다.</li></ul>";
+
+  s += "<h4>10. 운영 중 질문 수정 가이드</h4>";
+  s += "<p>수정 내용에 따라 손댈 파일이 다릅니다. 아래 표에서 해당하는 줄을 찾으세요. Apps Script에는 질문 제목과 옵션 문구가 들어가지 않고 <b>질문의 개수와 순서(열 위치)</b>만 들어갑니다. 그래서 문구만 바꾸면 Apps Script는 교체할 필요가 없습니다.</p>";
+  s += "<table><tr><th>수정 내용</th><th>생성기 재생성</th><th>웹 HTML 교체</th><th>Apps Script 교체</th><th>대시보드 교체</th><th>시트 작업</th></tr>";
+  s += "<tr><td>질문 제목 문구만 변경 (오타 등)</td><td>필요</td><td>필요</td><td>불필요</td><td>필요</td><td>4행 헤더를 같은 제목으로 수정</td></tr>";
+  s += "<tr><td>선택 옵션 문구 변경 (예: 양호/불량 → 적합/부적합)</td><td>필요</td><td>필요</td><td>불필요</td><td>필요</td><td>없음. 단, 아래 10-3 참고</td></tr>";
+  s += "<tr><td>질문 추가·삭제·순서 변경·유형 변경 (질문 개수가 바뀜)</td><td>필요</td><td>필요</td><td>필요</td><td>필요</td><td>열 삽입/삭제, 4행 헤더 재작성, 결재란 값 다시 입력, 외부 스크립트 열 번호 수정</td></tr>";
+  s += "<tr><td>작성 주기 변경 (매일 → 월요일 등)</td><td>필요</td><td>필요</td><td>불필요</td><td>불필요</td><td>없음</td></tr>";
+  s += "<tr><td>숫자 항목의 단위 또는 기준값 변경</td><td>필요</td><td>필요</td><td>불필요</td><td>필요</td><td>없음</td></tr>";
+  s += "<tr><td>점검장소·비밀번호 변경</td><td>필요</td><td>필요</td><td>불필요</td><td>불필요</td><td>없음</td></tr>";
+  s += "<tr><td>대시보드 지연 표시 시각 변경</td><td>필요</td><td>불필요</td><td>불필요</td><td>필요</td><td>없음</td></tr>";
+  s += "<tr><td>사진 폴더(Folder ID) 변경</td><td>불필요</td><td>불필요</td><td>필요 (코드 상단 값)</td><td>불필요</td><td>없음</td></tr>";
+  s += "</table>";
+
+  s += "<h4>10-1. 질문 추가·삭제·순서 변경 시 상세 절차</h4><ol>";
+  s += "<li><b>작업 시점을 정합니다.</b> 열 구조가 바뀌므로 점검 제출이 없는 시간(마감 직후, 업무 종료 후 등)에 작업하세요. 교체 중에는 웹 폼 제출이 잠시 실패할 수 있습니다.</li>";
+  s += "<li><b>마감 후 작업을 권장합니다.</b> [점검표 제출 (마감)]을 실행해 백업을 만들고 데이터를 비운 뒤 작업하면 기존 행과 열이 어긋나지 않습니다. 마감하지 않은 데이터가 있다면 먼저 시트 파일을 복사해 백업해 두세요.</li>";
+  s += "<li><b>생성기에서 질문을 고치고 [전체 코드 및 설명서 생성하기]</b>를 누릅니다. 새 열 위치, 결재란, 메일 칸 위치가 자동으로 다시 계산되니 <b>새 설명서의 열 표를 기준</b>으로 작업합니다.</li>";
+  s += "<li><b>시트 열을 맞춥니다.</b> 질문을 추가하려면 새 질문이 들어갈 위치의 열을 우클릭해 [왼쪽/오른쪽에 열 삽입]을 합니다. 특이사항, 첨부파일, 결재란, 메일 칸은 내용과 함께 한 칸씩 밀리므로 생성기의 새 위치와 자동으로 맞아떨어집니다. 질문을 삭제하려면 해당 열을 [열 삭제]합니다. 뒤쪽 열이 자동으로 당겨집니다.</li>";
+  s += "<li><b>결재란을 확인합니다.</b> 열 조작 전에 2~3행 결재란 값을 먼저 지우고(결재란 범위 안쪽에 열을 넣으면 결재란이 늘어나 어긋나므로), 작업 후에는 위 2번 표의 새 결재란 위치(" + lt.apprStart + "2:" + lt.apprEnd + "3)에 다시 입력합니다. 메일 칸(" + lt.email + "1~3)도 같은 방법으로 확인합니다.</li>";
+  s += "<li><b>4행 헤더를 새 질문 순서대로 다시 씁니다.</b> 대시보드는 헤더 이름을 표시에 쓰므로, 헤더가 질문과 어긋나면 표시가 틀어집니다.</li>";
+  s += "<li><b>Apps Script를 교체합니다.</b> 새 02번 코드를 전체 복사해 붙여넣고 저장합니다. 그다음 [배포] &gt; [배포 관리] &gt; 연필 아이콘 &gt; 버전 <b>새 버전</b> &gt; [배포]를 누릅니다. <b>새 배포(새 URL)가 아니라 기존 배포를 수정</b>해야 웹 폼과 대시보드의 URL이 그대로 유지됩니다. 함수 이름은 그대로이므로 installTriggers를 다시 실행할 필요는 없습니다.</li>";
+  s += "<li><b>웹 HTML과 대시보드 HTML을 새 파일로 교체합니다.</b> Web App URL이 같으므로 파일만 바꾸면 됩니다.</li>";
+  s += "<li><b>외부 미제출 확인 스크립트를 점검합니다.</b> 아래 10-2를 참고하세요.</li>";
+  s += "<li><b>테스트합니다.</b> 웹 폼에서 테스트 1건을 제출하고, 시트 마지막 행이 새 열 순서대로 기록되는지, 대시보드에 표시되는지 확인합니다. 테스트 행은 지우고 2~3행 결재란도 비웁니다.</li></ol>";
+
+  s += "<h4>10-2. 외부 미제출 검사(다른 스프레드시트) 연동</h4><ul>";
+  s += "<li>미제출 검사 코드는 <b>05_미제출검사_최종.gs</b>입니다. 점검표 시트와 별도 파일에 넣고, 편집기에서 installDailyTrigger를 한 번 실행하면 매일 9시대 트리거가 등록됩니다. 검사 함수 안에 시간 조건은 두지 않았으므로 트리거가 9시 1분이든 9시 50분이든 한 번만 발송합니다.</li>";
+  s += "<li>검사는 각 점검표 시트의 <b>A열(제출일시)과 C열(작성자)</b>을 5~100행에서 읽어 오늘 날짜 제출 여부를 판단합니다. 따라서 생성기가 만든 열 배치(A, C는 항상 고정)를 바꾸지 않는 한 질문을 추가·삭제해도 검사 코드는 그대로 동작합니다.</li>";
+  s += "<li><b>시트 이름을 바꾸면</b> 검사 코드의 TARGET_INSPECTIONS 목록도 같이 고쳐야 합니다. 시트를 찾지 못하면 조용히 넘어가지 않고, 발송 메일의 '확인 필요: 검사 오류' 항목에 표시됩니다.</li>";
+  s += "<li>질문을 바꾸면서 제출 열 위치가 A·C 밖으로 움직이는 경우에만 검사 코드의 열 번호를 수정하세요. 이 설명서의 열 표에서 A와 C를 확인할 수 있습니다.</li>";
+  s += "<li><b>마감 시점</b>: [점검표 제출 (마감)]으로 데이터가 비워진 뒤 9시 전에 검사가 돌면 당일 제출 기록이 없어서 미제출로 잘못 판단됩니다. 마감은 업무 종료 후에 하고, 검사는 다음 날 아침 9시에 돌아가도록 운영하세요.</li>";
+  s += "<li><b>월말 메일 중복 주의</b>: 시트 쪽 월말 메일 자동 발송과 이 미제출 검사가 같은 날 같은 수신자에게 나가면 메일이 두 통 갑니다. 둘 중 하나만 남기는 것을 권장합니다. 미제출 검사에 월말 안내를 포함하면 시트 쪽 자동 발송은 끄는 방식이 간단합니다.</li>";
+  s += "<li>검사 코드는 같은 날 두 번 실행돼도 한 번만 발송하도록 마지막 발송일을 기록합니다. 당일 재발송이 필요하면 스크립트 속성의 lastSentDate 값을 지우고 실행하세요.</li></ul>";
+
+  s += "<h4>10-3. 옵션 문구 변경 시 주의 (대시보드 판정)</h4><ul>";
+  s += "<li>대시보드는 '양호, 없음, 적정, 정상, 해당없음, -'를 정상으로 봅니다. 옵션을 '적합/부적합'처럼 바꾸면 모든 값이 이상으로 표시되므로, 대시보드 HTML의 <span class=\"code-inline\">NORMAL_VALUES</span> 목록에 정상 문구를 추가하고 다시 저장하세요.</li>";
+  s += "<li>웹 폼에는 새 문구가 바로 적용되므로, 옵션 문구 변경은 웹 폼과 대시보드 교체만으로 끝납니다.</li></ul>";
+  return s;
+}
+</script>
+<script>
+// ===== 화면 동작 (DOM) =====
+var lastResult = null;
+var TYPE_OPTIONS = [
+  ["SECTION", "📌 소제목 (구분선, 열 없음)"],
+  ["RADIO", "객관식 (단일 선택)"],
+  ["CHECKBOX", "체크박스 (다중 선택)"],
+  ["TEXT", "단답형 (텍스트)"],
+  ["NUMBER", "숫자 입력"],
+  ["TEXTAREA", "장문형"]
+];
+var CYCLE_OPTIONS = [
+  ["DAILY", "매일 작성"], ["MON", "월요일 전용 (주간)"], ["FRI", "금요일 전용 (주간)"], ["MONTH_1", "매월 1일 전용 (월간)"]
+];
+
+function selectHtml(cls, opts, val) {
+  return '<select class="' + cls + '">' + opts.map(function (o) {
+    return '<option value="' + o[0] + '">' + o[1] + '</option>';
+  }).join('') + '</select>';
+}
+
+function addQuestion(q) {
+  q = q || { title: '', type: 'RADIO', cycle: 'DAILY', options: '양호, 불량', unit: '', limit: '' };
+  var container = document.getElementById('questionsContainer');
+  var div = document.createElement('div');
+  div.className = 'question-item';
+  div.innerHTML =
+    '<div class="q-tools">' +
+      '<button type="button" class="btn-small" onclick="moveQuestion(this,-1)">▲</button>' +
+      '<button type="button" class="btn-small" onclick="moveQuestion(this,1)">▼</button>' +
+      '<button type="button" class="btn-del btn-small" onclick="removeQuestion(this)">삭제</button>' +
+    '</div>' +
+    '<div class="grid-2" style="padding-right:140px">' +
+      '<div><label>질문 제목</label><input type="text" class="q-title" value="' + esc(q.title) + '"></div>' +
+      '<div><label>질문 유형</label>' + selectHtml('q-type', TYPE_OPTIONS) + '</div>' +
+    '</div>' +
+    '<div class="sub-box q-cycle-box"><label>📅 작성 주기</label>' + selectHtml('q-cycle', CYCLE_OPTIONS) + '</div>' +
+    '<div class="sub-box q-opt-box"><label>선택 옵션 (쉼표 구분)</label><input type="text" class="q-options" value="' + esc(q.options || '') + '"></div>' +
+    '<div class="sub-box q-num-box"><div class="grid-2">' +
+      '<div><label>단위 (예: ℃, %)</label><input type="text" class="q-unit" value="' + esc(q.unit || '') + '"></div>' +
+      '<div><label>기준값 (이 값 초과 시 대시보드에 "초과" 표시, 비우면 판정 안 함)</label><input type="text" class="q-limit" value="' + esc(q.limit || '') + '"></div>' +
+    '</div></div>';
+  container.appendChild(div);
+  div.querySelector('.q-type').value = q.type || 'RADIO';
+  div.querySelector('.q-cycle').value = q.cycle || 'DAILY';
+  div.querySelector('.q-type').addEventListener('change', function () { refreshRow(div); });
+  refreshRow(div);
+  updateSummary();
+}
+
+// 유형에 따라 필요한 입력칸만 보이게
+function refreshRow(div) {
+  var type = div.querySelector('.q-type').value;
+  div.classList.toggle('section-type', type === 'SECTION');
+  div.querySelector('.q-cycle-box').style.display = type === 'SECTION' ? 'none' : 'block';
+  div.querySelector('.q-opt-box').style.display = (type === 'RADIO' || type === 'CHECKBOX') ? 'block' : 'none';
+  div.querySelector('.q-num-box').style.display = type === 'NUMBER' ? 'block' : 'none';
+}
+
+function moveQuestion(btn, dir) {
+  var item = btn.closest('.question-item');
+  var container = item.parentElement;
+  if (dir < 0 && item.previousElementSibling) container.insertBefore(item, item.previousElementSibling);
+  if (dir > 0 && item.nextElementSibling) container.insertBefore(item.nextElementSibling, item);
+  updateSummary();
+}
+
+function removeQuestion(btn) {
+  btn.closest('.question-item').remove();
+  updateSummary();
+}
+
+function updateSummary() {
+  var all = document.querySelectorAll('#questionsContainer .question-item');
+  var n = 0;
+  all.forEach(function (el) { if (el.querySelector('.q-type').value !== 'SECTION') n++; });
+  document.getElementById('qSummary').innerText = '전체 ' + all.length + '행 (데이터 열 ' + n + '개 → 열 A~' + colLetter(5 + n) + ')';
+}
+
+function readConfig() {
+  var v = function (id) { return document.getElementById(id).value.trim(); };
+  var questions = Array.prototype.map.call(document.querySelectorAll('#questionsContainer .question-item'), function (el) {
+    return {
+      title: el.querySelector('.q-title').value.trim(),
+      type: el.querySelector('.q-type').value,
+      cycle: el.querySelector('.q-cycle').value,
+      options: el.querySelector('.q-options').value,
+      unit: el.querySelector('.q-unit').value.trim(),
+      limit: el.querySelector('.q-limit').value.trim()
+    };
+  });
+  return {
+    sheetTitle: v('sheetTitle'),
+    location: v('locationName'),
+    password: v('appPassword'),
+    folderId: v('driveFolderId'),
+    webAppUrl: v('webAppUrl'),
+    timeStart: parseInt(v('timeStart'), 10),
+    timeEnd: parseInt(v('timeEnd'), 10),
+    questions: questions
+  };
+}
+
+function readTemplates() {
+  return {
+    html: document.getElementById('tpl-html').textContent,
+    gas: document.getElementById('tpl-gas').textContent,
+    dash: document.getElementById('tpl-dash').textContent
+  };
+}
+
+function generateAll() {
+  var errBox = document.getElementById('errBox');
+  var res = buildAll(readConfig(), readTemplates());
+  if (res.errors) {
+    errBox.style.display = 'block';
+    errBox.innerHTML = '<b>아래 내용을 확인해 주세요</b><br>' + res.errors.map(esc).join('<br>');
+    return;
+  }
+  errBox.style.display = 'none';
+  lastResult = res;
+  document.getElementById('guideContent').innerHTML = res.guide;
+  document.getElementById('outHtml').textContent = res.html;
+  document.getElementById('outGas').textContent = res.gas;
+  document.getElementById('outDash').textContent = res.dash;
+  document.querySelector('.tab-menu .tab-btn').click();
+}
+
+function openTab(evt, tabName) {
+  document.querySelectorAll('.tab-content').forEach(function (t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+  document.getElementById(tabName).classList.add('active');
+  evt.currentTarget.classList.add('active');
+}
+
+function getOut(kind) {
+  if (!lastResult) { alert('먼저 [전체 코드 및 설명서 생성하기]를 눌러주세요.'); return null; }
+  return { html: lastResult.html, gas: lastResult.gas, dash: lastResult.dash }[kind] || null;
+}
+
+function copyOne(kind) {
+  var text = getOut(kind);
+  if (text === null) return;
+  var done = function () { alert('클립보드에 복사되었습니다!'); };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+  } else {
+    fallbackCopy(text); done();
+  }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) { console.error(e); }
+  document.body.removeChild(ta);
+}
+
+function downloadOne(kind) {
+  if (!lastResult) { alert('먼저 [전체 코드 및 설명서 생성하기]를 눌러주세요.'); return; }
+  var name, mime, text;
+  if (kind === 'html') { text = lastResult.html; name = '01_웹폼_HTML.html'; mime = 'text/html'; }
+  else if (kind === 'gas') { text = lastResult.gas; name = '02_AppsScript.gs'; mime = 'text/plain'; }
+  else if (kind === 'dash') { text = lastResult.dash; name = '03_대시보드.html'; mime = 'text/html'; }
+  else {
+    text = '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>사용 설명서</title>' +
+      '<style>body{font-family:"Noto Sans KR",sans-serif;max-width:900px;margin:20px auto;padding:0 16px;color:#333}h4{color:#1a73e8}table{border-collapse:collapse;width:100%}th,td{border:1px solid #dadce0;padding:6px;text-align:left;vertical-align:top}th{background:#e8f0fe}.code-inline{background:#e9ecef;padding:1px 5px;border-radius:3px;font-family:monospace}.highlight{background:#e8f0fe;padding:1px 6px;border-radius:4px;font-weight:bold}.warn{background:#fff4e5;padding:10px;border-radius:6px}</style></head><body>' +
+      lastResult.guide + '</body></html>';
+    name = '04_사용설명서.html'; mime = 'text/html';
+  }
+  var blob = new Blob([text], { type: mime + ';charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+// 초기 질문 = 현재 운영 중인 점검표 구성
+DEFAULT_QUESTIONS.forEach(function (q) { addQuestion(q); });
 </script>
 </body>
 </html>
